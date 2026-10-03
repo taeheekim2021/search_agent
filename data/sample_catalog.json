@@ -1,0 +1,194 @@
+[
+  {
+    "id": "sample-001",
+    "title": "토리의 공룡 발자국",
+    "description": "토리가 숲속에서 커다란 발자국을 발견하고 초식 공룡의 몸과 먹이를 알아봅니다.",
+    "min_age": 3,
+    "max_age": 6,
+    "topics": [
+      "공룡",
+      "자연"
+    ],
+    "characters": [
+      "토리"
+    ],
+    "duration_minutes": 7,
+    "is_sample": true
+  },
+  {
+    "id": "sample-002",
+    "title": "모모의 공룡 박물관",
+    "description": "모모가 직접 만든 종이 화석으로 공룡의 뼈와 과거의 지구를 탐험합니다.",
+    "min_age": 5,
+    "max_age": 8,
+    "topics": [
+      "공룡",
+      "과학"
+    ],
+    "characters": [
+      "모모"
+    ],
+    "duration_minutes": 12,
+    "is_sample": true
+  },
+  {
+    "id": "sample-003",
+    "title": "별콩의 화석 연구실",
+    "description": "별콩이 지층 모형을 비교하며 화석이 만들어지는 순서를 실험합니다.",
+    "min_age": 8,
+    "max_age": 12,
+    "topics": [
+      "공룡",
+      "과학"
+    ],
+    "characters": [
+      "별콩"
+    ],
+    "duration_minutes": 15,
+    "is_sample": true
+  },
+  {
+    "id": "sample-004",
+    "title": "토리의 반짝 양치",
+    "description": "토리가 거울 앞에서 이를 닦는 순서를 노래와 함께 연습합니다.",
+    "min_age": 2,
+    "max_age": 5,
+    "topics": [
+      "양치",
+      "생활습관"
+    ],
+    "characters": [
+      "토리"
+    ],
+    "duration_minutes": 4,
+    "is_sample": true
+  },
+  {
+    "id": "sample-005",
+    "title": "모모의 달 여행",
+    "description": "모모가 상자로 우주선을 만들어 달과 지구의 차이를 살펴봅니다.",
+    "min_age": 4,
+    "max_age": 7,
+    "topics": [
+      "우주",
+      "과학"
+    ],
+    "characters": [
+      "모모"
+    ],
+    "duration_minutes": 9,
+    "is_sample": true
+  },
+  {
+    "id": "sample-006",
+    "title": "별콩과 숫자 정원",
+    "description": "별콩이 씨앗을 하나씩 세고 작은 화분에 나누어 심습니다.",
+    "min_age": 3,
+    "max_age": 6,
+    "topics": [
+      "수학",
+      "자연"
+    ],
+    "characters": [
+      "별콩"
+    ],
+    "duration_minutes": 6,
+    "is_sample": true
+  },
+  {
+    "id": "sample-007",
+    "title": "토리의 마음 우산",
+    "description": "토리가 속상한 마음을 말로 표현하고 친구의 이야기를 듣습니다.",
+    "min_age": 4,
+    "max_age": 8,
+    "topics": [
+      "감정",
+      "친구"
+    ],
+    "characters": [
+      "토리"
+    ],
+    "duration_minutes": 8,
+    "is_sample": true
+  },
+  {
+    "id": "sample-008",
+    "title": "구름이의 바다 편지",
+    "description": "구름이가 조개 모양 우편함을 따라 바닷속 동물의 집을 관찰합니다.",
+    "min_age": 3,
+    "max_age": 7,
+    "topics": [
+      "바다",
+      "동물"
+    ],
+    "characters": [
+      "구름이"
+    ],
+    "duration_minutes": 10,
+    "is_sample": true
+  },
+  {
+    "id": "sample-009",
+    "title": "모모와 별콩의 공룡 소풍",
+    "description": "두 친구가 공룡 그림 카드를 분류하고 함께 도시락을 나눕니다.",
+    "min_age": 4,
+    "max_age": 6,
+    "topics": [
+      "공룡",
+      "친구"
+    ],
+    "characters": [
+      "모모",
+      "별콩"
+    ],
+    "duration_minutes": 8,
+    "is_sample": true
+  },
+  {
+    "id": "sample-010",
+    "title": "구름이의 잠자리 음악",
+    "description": "구름이가 조용한 악기 소리를 들으며 하루를 마무리합니다.",
+    "min_age": 1,
+    "max_age": 4,
+    "topics": [
+      "음악",
+      "생활습관"
+    ],
+    "characters": [
+      "구름이"
+    ],
+    "duration_minutes": 5,
+    "is_sample": true
+  },
+  {
+    "id": "sample-011",
+    "title": "토리의 무지개 실험",
+    "description": "토리가 투명한 컵과 색종이로 빛과 색의 차이를 관찰합니다.",
+    "min_age": 6,
+    "max_age": 9,
+    "topics": [
+      "과학",
+      "미술"
+    ],
+    "characters": [
+      "토리"
+    ],
+    "duration_minutes": 11,
+    "is_sample": true
+  },
+  {
+    "id": "sample-012",
+    "title": "별콩의 덧셈 가게",
+    "description": "별콩이 가상 과일 가게에서 물건 수를 합하며 덧셈을 익힙니다.",
+    "min_age": 6,
+    "max_age": 9,
+    "topics": [
+      "수학"
+    ],
+    "characters": [
+      "별콩"
+    ],
+    "duration_minutes": 9,
+    "is_sample": true
+  }
+]
