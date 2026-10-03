@@ -7,7 +7,7 @@
 <p class="muted">SEARCH AGENT / 검토용 프로토타입</p><h1>우리 아이에게 맞는 이야기 찾기</h1>
 <p>나이, 주제, 캐릭터를 자연어로 입력하고 검색 조건과 콘텐츠 메타데이터를 확인하세요.</p>
 <div class="badge" id="mode">모드 확인 중…</div>
-<p class="muted">모든 콘텐츠와 캐릭터는 직접 만든 가상 샘플입니다. 실제 아이들나라 카탈로그가 아닙니다.</p>
+<p class="muted" id="catalog-notice">모든 콘텐츠와 캐릭터는 직접 만든 가상 샘플입니다. 실제 아이들나라 카탈로그가 아닙니다.</p>
 <form class="box" id="search"><label for="query">어떤 영상을 찾으세요?</label>
 <input id="query" maxlength="500" required value="5살 아이가 볼 공룡 영상">
 <div class="examples"><button type="button" data-query="5살 아이가 볼 공룡 영상">5살 · 공룡</button><button type="button" data-query="토리 캐릭터 영상">토리 캐릭터</button><button type="button" data-query="18살 공룡 영상">결과 없음</button></div>
@@ -17,13 +17,13 @@
 <p class="muted">연령은 하드 필터입니다. 인식된 주제·캐릭터도 모두 충족해야 합니다. 점수는 확률이나 모델의 속마음이 아닙니다.</p>
 </main><script>
 const el=id=>document.getElementById(id);
-fetch('/health').then(r=>r.json()).then(d=>{el('mode').textContent=d.mode==='mock'?'모의 모드 · 키워드 UI 데모 / 실제 AI 모델 미실행':'실제 모델 모드 · Qwen3-Embedding-4B → BGE v2 m3 (첫 검색에서 로딩)';el('k').value=d.default_top_k;el('n').value=d.default_top_n;}).catch(()=>el('mode').textContent='서버 연결을 확인하세요.');
+fetch('/health').then(r=>r.json()).then(d=>{el('mode').textContent=d.mode==='mock'?'모의 모드 · 키워드 UI 데모 / 실제 AI 모델 미실행':'실제 모델 모드 · Qwen3-Embedding-4B → BGE v2 m3 (첫 검색에서 로딩)';el('catalog-notice').textContent=d.catalog_notice;if(d.backend==='opensearch'){el('mode').textContent='공개 미디어 · OpenSearch + 실제 Qwen/BGE 모델';el('query').value='펭귄 영상';document.querySelector('h1').textContent='공개 미디어 자료 찾아보기';const examples=document.querySelectorAll('[data-query]');['펭귄 영상','우주 영상','5살 펭귄 영상'].forEach((q,i)=>{examples[i].dataset.query=q;examples[i].textContent=q;});}el('k').value=d.default_top_k;el('n').value=d.default_top_n;}).catch(()=>el('mode').textContent='서버 연결을 확인하세요.');
 document.querySelectorAll('[data-query]').forEach(b=>b.onclick=()=>el('query').value=b.dataset.query);
 el('search').onsubmit=async e=>{e.preventDefault();el('submit').disabled=true;el('status').className='';el('status').textContent='검색 중… 실제 모드의 첫 모델 로딩은 오래 걸릴 수 있습니다.';el('results').replaceChildren();el('conditions').replaceChildren();el('raw').textContent='';
 try{const response=await fetch('/api/search',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({query:el('query').value,top_k:Number(el('k').value),top_n:Number(el('n').value)})});const data=await response.json();el('raw').textContent=JSON.stringify(data,null,2);if(!response.ok)throw new Error(typeof data.detail==='string'?data.detail:JSON.stringify(data.detail));
 el('status').textContent=`${data.results.length}개 결과 · 후보 ${data.candidate_count}개 · ${data.elapsed_ms}ms\n${data.notice}`;
 el('conditions').textContent=`추출 조건: 나이 ${data.conditions.age??'미지정'} / 주제 ${data.conditions.topics.join(', ')||'미지정'} / 캐릭터 ${data.conditions.characters.join(', ')||'미지정'}`;
-if(!data.results.length)el('results').textContent='조건에 맞는 샘플 콘텐츠가 없습니다. 나이나 검색어를 바꿔 보세요.';
-for(const result of data.results){const card=document.createElement('article');const title=document.createElement('h2');title.textContent=result.content.title;const desc=document.createElement('p');desc.textContent=result.content.description;const list=document.createElement('ul');for(const fact of result.evidence){const li=document.createElement('li');li.textContent=fact;list.append(li);}const meta=document.createElement('p');meta.className='muted';meta.textContent=`${result.content.id} · ${result.retrieval_sources.join(' + ')}${result.reranker_score===null?' · 모델 점수 없음':` · BGE 원시 점수 ${result.reranker_score.toFixed(4)} · RRF ${result.fusion_score.toFixed(4)}`}`;card.append(title,desc,list,meta);el('results').append(card);}
+if(!data.results.length)el('results').textContent='조건에 맞는 콘텐츠가 없습니다. 나이나 검색어를 바꿔 보세요.';
+for(const result of data.results){const card=document.createElement('article');const title=document.createElement('h2');title.textContent=result.content.title;const desc=document.createElement('p');desc.textContent=result.content.description;const list=document.createElement('ul');for(const fact of result.evidence){const li=document.createElement('li');li.textContent=fact;list.append(li);}const meta=document.createElement('p');meta.className='muted';meta.textContent=`${result.content_id??result.content.id} · ${result.retrieval_sources.join(' + ')}${result.reranker_score===null?' · 모델 점수 없음':` · BGE 원시 점수 ${result.reranker_score.toFixed(4)} · RRF ${result.fusion_score.toFixed(4)}`}`;card.append(title,desc,list,meta);if(result.content.canonical_url){const link=document.createElement('a');link.href=result.content.canonical_url;link.textContent='출처·라이선스 페이지';link.target='_blank';link.rel='noopener noreferrer';card.append(link);}el('results').append(card);}
 }catch(error){el('status').className='error';el('status').textContent=`검색 실패: ${error.message}`;}finally{el('submit').disabled=false;}};
 </script></body></html>

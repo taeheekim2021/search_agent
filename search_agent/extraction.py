@@ -24,6 +24,14 @@ TOPIC_ALIASES = {
 
 
 def extract(query: str, catalog: list[Content]) -> Conditions:
+    return extract_vocabulary(
+        query,
+        sorted({t for c in catalog for t in c.topics}),
+        sorted({ch for c in catalog for ch in c.characters}),
+    )
+
+
+def extract_vocabulary(query: str, topics: list[str], characters: list[str]) -> Conditions:
     ages = [int(age) for age in re.findall(r"(?<![\d.])(\d+)\s*(?:살|세)(?![가-힣])", query)]
     # Allow particles: '5살 아이', '5살에게', '만 5세가' are common queries.
     ages += [
@@ -36,8 +44,6 @@ def extract(query: str, catalog: list[Content]) -> Conditions:
         raise ValueError("나이는 0~18 사이의 정수로 입력하세요.")
     if any(age > 18 for age in ages) or len(set(ages)) > 1:
         raise ValueError("한 번에 0~18세의 나이 하나만 지정하세요.")
-    topics = sorted({topic for c in catalog for topic in c.topics})
-    characters = sorted({character for c in catalog for character in c.characters})
     found_topics = [
         t for t in topics if t in query or any(alias in query for alias in TOPIC_ALIASES.get(t, []))
     ]

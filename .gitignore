@@ -6,3 +6,12 @@ __pycache__/
 *.egg-info/
 .cache/
 .env
+
+.media/
+*.webm
+*.mp4
+*.ogv
+*.wav
+*.mp3
+*.flac
+*.ogg

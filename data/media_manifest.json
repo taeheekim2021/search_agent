@@ -1,0 +1,614 @@
+{
+  "version": 1,
+  "entries": [
+    {
+      "canonical_url": "https://commons.wikimedia.org/wiki/File:Solarsystem.webm",
+      "original_url": "https://upload.wikimedia.org/wikipedia/commons/6/6b/Solarsystem.webm?utm_source=commons.wikimedia.org&utm_campaign=index&utm_content=original",
+      "title": "태양계 설명 영상",
+      "description": "태양계를 설명하는 일본어 영상.",
+      "tags": [
+        "우주",
+        "태양계",
+        "행성"
+      ],
+      "characters": [],
+      "language": "ja",
+      "media_format": "webm",
+      "duration_seconds": 175.96,
+      "author": "Simpleshow Japan",
+      "license": "CC-BY-SA-4.0",
+      "license_url": "https://creativecommons.org/licenses/by-sa/4.0/",
+      "attribution": "Solarsystem.webm — Simpleshow Japan. Source: https://commons.wikimedia.org/wiki/File:Solarsystem.webm. CC-BY-SA-4.0: https://creativecommons.org/licenses/by-sa/4.0/. Korean metadata is an assistant-produced translation/summary; original media unchanged.",
+      "rights_verified": true,
+      "metadata_provenance": {
+        "title": {
+          "method": "assistant_translation",
+          "source_url": "https://commons.wikimedia.org/wiki/File:Solarsystem.webm",
+          "note": "Assistant translation/summary of cited source description; not official localization"
+        },
+        "description": {
+          "method": "assistant_translation",
+          "source_url": "https://commons.wikimedia.org/wiki/File:Solarsystem.webm",
+          "note": "Assistant translation/summary of cited source description; not official localization"
+        },
+        "tags": {
+          "method": "editorial",
+          "source_url": "https://commons.wikimedia.org/wiki/File:Solarsystem.webm",
+          "note": "Assistant topic labels based on source description"
+        },
+        "language": {
+          "method": "source",
+          "source_url": "https://commons.wikimedia.org/wiki/File:Solarsystem.webm",
+          "note": "Source language/category verified"
+        },
+        "duration_seconds": {
+          "method": "source",
+          "source_url": "https://commons.wikimedia.org/wiki/File:Solarsystem.webm",
+          "note": "Source file-page duration; not independently measured here."
+        }
+      },
+      "license_notes": "Retain source/creator/license and identify changes. Distributing adaptations requires same/compatible license. Media license differs from source-page prose license.",
+      "metadata_license": "CC-BY-SA-4.0",
+      "source_metadata": {
+        "original_title": "Solarsystem.webm",
+        "description_original": "太陽系の解説動画",
+        "source_id": "commons:Solarsystem.webm",
+        "verification": {
+          "date": "2026-10-03",
+          "source_page_live_browser": true,
+          "direct_url_observed_in_original_file_link": true,
+          "download_verified": false,
+          "playback_verified": false
+        },
+        "source_categories": [
+          "Simpleshow videos in Japanese"
+        ],
+        "license_evidence_url": "https://commons.wikimedia.org/wiki/File:Solarsystem.webm",
+        "required_source_credit": null,
+        "child_suitability": "Unreviewed; no official suitability or educational efficacy assertion",
+        "metadata_license_url": "https://creativecommons.org/licenses/by-sa/4.0/"
+      },
+      "min_age": null,
+      "max_age": null,
+      "age_rating_source": null,
+      "subtitle_text": null,
+      "subtitle_source_url": null,
+      "subtitle_license": null,
+      "expected_sha256": null
+    },
+    {
+      "canonical_url": "https://commons.wikimedia.org/wiki/File:Elephant.webm",
+      "original_url": "https://upload.wikimedia.org/wikipedia/commons/7/74/Elephant.webm?utm_source=commons.wikimedia.org&utm_campaign=index&utm_content=original",
+      "title": "몰 국립공원의 코끼리",
+      "description": "몰 국립공원에서 촬영한 코끼리 영상.",
+      "tags": [
+        "국립공원",
+        "동물",
+        "코끼리"
+      ],
+      "characters": [],
+      "language": "und",
+      "media_format": "webm",
+      "duration_seconds": 6.6,
+      "author": "OJjnr",
+      "license": "CC0-1.0",
+      "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "attribution": "Elephant.webm — OJjnr. Source: https://commons.wikimedia.org/wiki/File:Elephant.webm. CC0-1.0: https://creativecommons.org/publicdomain/zero/1.0/. Korean metadata is an assistant-produced translation/summary; original media unchanged.",
+      "rights_verified": true,
+      "metadata_provenance": {
+        "title": {
+          "method": "assistant_translation",
+          "source_url": "https://commons.wikimedia.org/wiki/File:Elephant.webm",
+          "note": "Assistant translation/summary of cited source description; not official localization"
+        },
+        "description": {
+          "method": "assistant_translation",
+          "source_url": "https://commons.wikimedia.org/wiki/File:Elephant.webm",
+          "note": "Assistant translation/summary of cited source description; not official localization"
+        },
+        "tags": {
+          "method": "editorial",
+          "source_url": "https://commons.wikimedia.org/wiki/File:Elephant.webm",
+          "note": "Assistant topic labels based on source description"
+        },
+        "language": {
+          "method": "unknown",
+          "source_url": "https://commons.wikimedia.org/wiki/File:Elephant.webm",
+          "note": "Unknown; not inferred from metadata language"
+        },
+        "duration_seconds": {
+          "method": "source",
+          "source_url": "https://commons.wikimedia.org/wiki/File:Elephant.webm",
+          "note": "Source file-page duration; not independently measured here."
+        }
+      },
+      "license_notes": "CC0 dedication stated by uploader. Attribution retained for provenance; CC0 does not itself require credit. Source-page descriptive prose has its separate license.",
+      "metadata_license": "CC-BY-SA-4.0",
+      "source_metadata": {
+        "original_title": "Elephant.webm",
+        "description_original": "a video of an elephant at mole national park",
+        "source_id": "commons:Elephant.webm",
+        "verification": {
+          "date": "2026-10-03",
+          "source_page_live_browser": true,
+          "direct_url_observed_in_original_file_link": true,
+          "download_verified": false,
+          "playback_verified": false
+        },
+        "source_categories": [
+          "Mammals at mole national park",
+          "Mole National Park",
+          "Videos of Elephantidae"
+        ],
+        "license_evidence_url": "https://commons.wikimedia.org/wiki/File:Elephant.webm",
+        "required_source_credit": null,
+        "child_suitability": "Unreviewed; no official suitability or educational efficacy assertion",
+        "metadata_license_url": "https://creativecommons.org/licenses/by-sa/4.0/"
+      },
+      "min_age": null,
+      "max_age": null,
+      "age_rating_source": null,
+      "subtitle_text": null,
+      "subtitle_source_url": null,
+      "subtitle_license": null,
+      "expected_sha256": null
+    },
+    {
+      "canonical_url": "https://commons.wikimedia.org/wiki/File:Penguin_was_sleeping.webm",
+      "original_url": "https://upload.wikimedia.org/wikipedia/commons/7/73/Penguin_was_sleeping.webm?utm_source=commons.wikimedia.org&utm_campaign=index&utm_content=original",
+      "title": "잠자는 펭귄",
+      "description": "잠자는 펭귄을 담은 영상.",
+      "tags": [
+        "동물",
+        "잠",
+        "펭귄"
+      ],
+      "characters": [],
+      "language": "und",
+      "media_format": "webm",
+      "duration_seconds": 11.0,
+      "author": "Chicomint",
+      "license": "CC0-1.0",
+      "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "attribution": "Penguin was sleeping.webm — Chicomint. Source: https://commons.wikimedia.org/wiki/File:Penguin_was_sleeping.webm. CC0-1.0: https://creativecommons.org/publicdomain/zero/1.0/. Korean metadata is an assistant-produced translation/summary; original media unchanged.",
+      "rights_verified": true,
+      "metadata_provenance": {
+        "title": {
+          "method": "assistant_translation",
+          "source_url": "https://commons.wikimedia.org/wiki/File:Penguin_was_sleeping.webm",
+          "note": "Assistant translation/summary of cited source description; not official localization"
+        },
+        "description": {
+          "method": "assistant_translation",
+          "source_url": "https://commons.wikimedia.org/wiki/File:Penguin_was_sleeping.webm",
+          "note": "Assistant translation/summary of cited source description; not official localization"
+        },
+        "tags": {
+          "method": "editorial",
+          "source_url": "https://commons.wikimedia.org/wiki/File:Penguin_was_sleeping.webm",
+          "note": "Assistant topic labels based on source description"
+        },
+        "language": {
+          "method": "unknown",
+          "source_url": "https://commons.wikimedia.org/wiki/File:Penguin_was_sleeping.webm",
+          "note": "Unknown; not inferred from metadata language"
+        },
+        "duration_seconds": {
+          "method": "source",
+          "source_url": "https://commons.wikimedia.org/wiki/File:Penguin_was_sleeping.webm",
+          "note": "Source file-page duration; not independently measured here."
+        }
+      },
+      "license_notes": "CC0 dedication stated by uploader. Attribution retained for provenance; CC0 does not itself require credit. Source-page descriptive prose has its separate license.",
+      "metadata_license": "CC-BY-SA-4.0",
+      "source_metadata": {
+        "original_title": "Penguin was sleeping.webm",
+        "description_original": "Penguin was sleeping",
+        "source_id": "commons:Penguin_was_sleeping.webm",
+        "verification": {
+          "date": "2026-10-03",
+          "source_page_live_browser": true,
+          "direct_url_observed_in_original_file_link": true,
+          "download_verified": false,
+          "playback_verified": false
+        },
+        "source_categories": [],
+        "license_evidence_url": "https://commons.wikimedia.org/wiki/File:Penguin_was_sleeping.webm",
+        "required_source_credit": null,
+        "child_suitability": "Unreviewed; no official suitability or educational efficacy assertion",
+        "metadata_license_url": "https://creativecommons.org/licenses/by-sa/4.0/"
+      },
+      "min_age": null,
+      "max_age": null,
+      "age_rating_source": null,
+      "subtitle_text": null,
+      "subtitle_source_url": null,
+      "subtitle_license": null,
+      "expected_sha256": null
+    },
+    {
+      "canonical_url": "https://commons.wikimedia.org/wiki/File:Chinstrap_penguin_jumps.webm",
+      "original_url": "https://upload.wikimedia.org/wikipedia/commons/2/29/Chinstrap_penguin_jumps.webm?utm_source=commons.wikimedia.org&utm_campaign=index&utm_content=original",
+      "title": "뛰어오르는 턱끈펭귄",
+      "description": "몬트리올 바이오돔에서 뛰어오르는 턱끈펭귄.",
+      "tags": [
+        "동물",
+        "점프",
+        "턱끈펭귄",
+        "펭귄"
+      ],
+      "characters": [],
+      "language": "zxx",
+      "media_format": "webm",
+      "duration_seconds": 1.768,
+      "author": "BrokenSegue",
+      "license": "CC-BY-SA-4.0",
+      "license_url": "https://creativecommons.org/licenses/by-sa/4.0/",
+      "attribution": "Chinstrap penguin jumps.webm — BrokenSegue. Source: https://commons.wikimedia.org/wiki/File:Chinstrap_penguin_jumps.webm. CC-BY-SA-4.0: https://creativecommons.org/licenses/by-sa/4.0/. Korean metadata is an assistant-produced translation/summary; original media unchanged.",
+      "rights_verified": true,
+      "metadata_provenance": {
+        "title": {
+          "method": "assistant_translation",
+          "source_url": "https://commons.wikimedia.org/wiki/File:Chinstrap_penguin_jumps.webm",
+          "note": "Assistant translation/summary of cited source description; not official localization"
+        },
+        "description": {
+          "method": "assistant_translation",
+          "source_url": "https://commons.wikimedia.org/wiki/File:Chinstrap_penguin_jumps.webm",
+          "note": "Assistant translation/summary of cited source description; not official localization"
+        },
+        "tags": {
+          "method": "editorial",
+          "source_url": "https://commons.wikimedia.org/wiki/File:Chinstrap_penguin_jumps.webm",
+          "note": "Assistant topic labels based on source description"
+        },
+        "language": {
+          "method": "source",
+          "source_url": "https://commons.wikimedia.org/wiki/File:Chinstrap_penguin_jumps.webm",
+          "note": "No linguistic content: silent source category, explicit no-audio statement, or ffprobe"
+        },
+        "duration_seconds": {
+          "method": "source",
+          "source_url": "https://commons.wikimedia.org/wiki/File:Chinstrap_penguin_jumps.webm",
+          "note": "Source file-page duration; not independently measured here."
+        }
+      },
+      "license_notes": "Retain source/creator/license and identify changes. Distributing adaptations requires same/compatible license. Media license differs from source-page prose license.",
+      "metadata_license": "CC-BY-SA-4.0",
+      "source_metadata": {
+        "original_title": "Chinstrap penguin jumps.webm",
+        "description_original": "Chinstrap penguin at the Montreal Biodome jumps",
+        "source_id": "commons:Chinstrap_penguin_jumps.webm",
+        "verification": {
+          "date": "2026-10-03",
+          "source_page_live_browser": true,
+          "direct_url_observed_in_original_file_link": true,
+          "download_verified": true,
+          "playback_verified": false,
+          "ffprobe_verified": true,
+          "ffprobe_duration_seconds": 1.768,
+          "ffprobe_audio_streams": 0
+        },
+        "source_categories": [],
+        "license_evidence_url": "https://commons.wikimedia.org/wiki/File:Chinstrap_penguin_jumps.webm",
+        "required_source_credit": null,
+        "child_suitability": "Unreviewed; no official suitability or educational efficacy assertion",
+        "metadata_license_url": "https://creativecommons.org/licenses/by-sa/4.0/"
+      },
+      "min_age": null,
+      "max_age": null,
+      "age_rating_source": null,
+      "subtitle_text": null,
+      "subtitle_source_url": null,
+      "subtitle_license": null,
+      "expected_sha256": "9c175ea0a1f25cea60a1d88c04cbbdf2f0294c29cf91738062a3c7bd86e84545"
+    },
+    {
+      "canonical_url": "https://commons.wikimedia.org/wiki/File:Monarch_butterfly_1.webm",
+      "original_url": "https://upload.wikimedia.org/wikipedia/commons/d/dd/Monarch_butterfly_1.webm?utm_source=commons.wikimedia.org&utm_campaign=index&utm_content=original",
+      "title": "야생의 모나크나비",
+      "description": "캐나다 온타리오 야생에서 촬영한 모나크나비.",
+      "tags": [
+        "곤충",
+        "나비",
+        "동물",
+        "모나크나비"
+      ],
+      "characters": [],
+      "language": "zxx",
+      "media_format": "webm",
+      "duration_seconds": 40.206,
+      "author": "Truem",
+      "license": "CC0-1.0",
+      "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "attribution": "Monarch butterfly 1.webm — Truem. Source: https://commons.wikimedia.org/wiki/File:Monarch_butterfly_1.webm. CC0-1.0: https://creativecommons.org/publicdomain/zero/1.0/. Korean metadata is an assistant-produced translation/summary; original media unchanged.",
+      "rights_verified": true,
+      "metadata_provenance": {
+        "title": {
+          "method": "assistant_translation",
+          "source_url": "https://commons.wikimedia.org/wiki/File:Monarch_butterfly_1.webm",
+          "note": "Assistant translation/summary of cited source description; not official localization"
+        },
+        "description": {
+          "method": "assistant_translation",
+          "source_url": "https://commons.wikimedia.org/wiki/File:Monarch_butterfly_1.webm",
+          "note": "Assistant translation/summary of cited source description; not official localization"
+        },
+        "tags": {
+          "method": "editorial",
+          "source_url": "https://commons.wikimedia.org/wiki/File:Monarch_butterfly_1.webm",
+          "note": "Assistant topic labels based on source description"
+        },
+        "language": {
+          "method": "source",
+          "source_url": "https://commons.wikimedia.org/wiki/File:Monarch_butterfly_1.webm",
+          "note": "No linguistic content: silent source category, explicit no-audio statement, or ffprobe"
+        },
+        "duration_seconds": {
+          "method": "source",
+          "source_url": "https://commons.wikimedia.org/wiki/File:Monarch_butterfly_1.webm",
+          "note": "Source file-page duration; not independently measured here."
+        }
+      },
+      "license_notes": "CC0 dedication stated by uploader. Attribution retained for provenance; CC0 does not itself require credit. Source-page descriptive prose has its separate license.",
+      "metadata_license": "CC-BY-SA-4.0",
+      "source_metadata": {
+        "original_title": "Monarch butterfly 1.webm",
+        "description_original": "Monarch butterfly in Ontario Canada, in the wild.",
+        "source_id": "commons:Monarch_butterfly_1.webm",
+        "verification": {
+          "date": "2026-10-03",
+          "source_page_live_browser": true,
+          "direct_url_observed_in_original_file_link": true,
+          "download_verified": false,
+          "playback_verified": false
+        },
+        "source_categories": [
+          "Videos of Danaus plexippus",
+          "Silent videos",
+          "Danaus plexippus of Ontario"
+        ],
+        "license_evidence_url": "https://commons.wikimedia.org/wiki/File:Monarch_butterfly_1.webm",
+        "required_source_credit": null,
+        "child_suitability": "Unreviewed; no official suitability or educational efficacy assertion",
+        "metadata_license_url": "https://creativecommons.org/licenses/by-sa/4.0/"
+      },
+      "min_age": null,
+      "max_age": null,
+      "age_rating_source": null,
+      "subtitle_text": null,
+      "subtitle_source_url": null,
+      "subtitle_license": null,
+      "expected_sha256": null
+    },
+    {
+      "canonical_url": "https://commons.wikimedia.org/wiki/File:Butterfly_flying.webm",
+      "original_url": "https://upload.wikimedia.org/wikipedia/commons/a/a4/Butterfly_flying.webm?utm_source=commons.wikimedia.org&utm_campaign=index&utm_content=original",
+      "title": "날아다니는 나비",
+      "description": "인도 뉴델리 로디 가든에서 날아다니는 나비를 촬영한 영상.",
+      "tags": [
+        "곤충",
+        "나비",
+        "날기",
+        "동물"
+      ],
+      "characters": [],
+      "language": "und",
+      "media_format": "webm",
+      "duration_seconds": 33.272,
+      "author": "Subhashish Panigrahi",
+      "license": "CC-BY-SA-3.0",
+      "license_url": "https://creativecommons.org/licenses/by-sa/3.0/",
+      "attribution": "Butterfly flying.webm — Subhashish Panigrahi. Source: https://commons.wikimedia.org/wiki/File:Butterfly_flying.webm. CC-BY-SA-3.0: https://creativecommons.org/licenses/by-sa/3.0/. Korean metadata is an assistant-produced translation/summary; original media unchanged.",
+      "rights_verified": true,
+      "metadata_provenance": {
+        "title": {
+          "method": "assistant_translation",
+          "source_url": "https://commons.wikimedia.org/wiki/File:Butterfly_flying.webm",
+          "note": "Assistant translation/summary of cited source description; not official localization"
+        },
+        "description": {
+          "method": "assistant_translation",
+          "source_url": "https://commons.wikimedia.org/wiki/File:Butterfly_flying.webm",
+          "note": "Assistant translation/summary of cited source description; not official localization"
+        },
+        "tags": {
+          "method": "editorial",
+          "source_url": "https://commons.wikimedia.org/wiki/File:Butterfly_flying.webm",
+          "note": "Assistant topic labels based on source description"
+        },
+        "language": {
+          "method": "unknown",
+          "source_url": "https://commons.wikimedia.org/wiki/File:Butterfly_flying.webm",
+          "note": "Unknown; not inferred from metadata language"
+        },
+        "duration_seconds": {
+          "method": "source",
+          "source_url": "https://commons.wikimedia.org/wiki/File:Butterfly_flying.webm",
+          "note": "Source file-page duration; not independently measured here."
+        }
+      },
+      "license_notes": "Retain source/creator/license and identify changes. Distributing adaptations requires same/compatible license. Media license differs from source-page prose license.",
+      "metadata_license": "CC-BY-SA-4.0",
+      "source_metadata": {
+        "original_title": "Butterfly flying.webm",
+        "description_original": "This video of a butterfly flying was shot in Lodi gardens in New Delhi, India.",
+        "source_id": "commons:Butterfly_flying.webm",
+        "verification": {
+          "date": "2026-10-03",
+          "source_page_live_browser": true,
+          "direct_url_observed_in_original_file_link": true,
+          "download_verified": false,
+          "playback_verified": false
+        },
+        "source_categories": [
+          "Unidentified Pieridae",
+          "Videos from Delhi",
+          "Videos of butterflies"
+        ],
+        "license_evidence_url": "https://commons.wikimedia.org/wiki/File:Butterfly_flying.webm",
+        "required_source_credit": null,
+        "child_suitability": "Unreviewed; no official suitability or educational efficacy assertion",
+        "metadata_license_url": "https://creativecommons.org/licenses/by-sa/4.0/"
+      },
+      "min_age": null,
+      "max_age": null,
+      "age_rating_source": null,
+      "subtitle_text": null,
+      "subtitle_source_url": null,
+      "subtitle_license": null,
+      "expected_sha256": null
+    },
+    {
+      "canonical_url": "https://commons.wikimedia.org/wiki/File:Small_Copper_Butterfly_(Lycaena_phlaeas).webm",
+      "original_url": "https://upload.wikimedia.org/wikipedia/commons/8/89/Small_Copper_Butterfly_%28Lycaena_phlaeas%29.webm?utm_source=commons.wikimedia.org&utm_campaign=index&utm_content=original",
+      "title": "도쿄에서 촬영한 Lycaena phlaeas 나비",
+      "description": "도쿄에서 촬영한 Lycaena phlaeas 나비. 원본 설명에 오디오 없음으로 명시되어 있다.",
+      "tags": [
+        "Lycaena phlaeas",
+        "곤충",
+        "나비",
+        "동물"
+      ],
+      "characters": [],
+      "language": "zxx",
+      "media_format": "webm",
+      "duration_seconds": 34.0,
+      "author": "The Nature Box",
+      "license": "CC-BY-SA-4.0",
+      "license_url": "https://creativecommons.org/licenses/by-sa/4.0/",
+      "attribution": "Small Copper Butterfly (Lycaena phlaeas).webm — The Nature Box. Source: https://commons.wikimedia.org/wiki/File:Small_Copper_Butterfly_(Lycaena_phlaeas).webm. CC-BY-SA-4.0: https://creativecommons.org/licenses/by-sa/4.0/. Korean metadata is an assistant-produced translation/summary; original media unchanged.",
+      "rights_verified": true,
+      "metadata_provenance": {
+        "title": {
+          "method": "assistant_translation",
+          "source_url": "https://commons.wikimedia.org/wiki/File:Small_Copper_Butterfly_(Lycaena_phlaeas).webm",
+          "note": "Assistant translation/summary of cited source description; not official localization"
+        },
+        "description": {
+          "method": "assistant_translation",
+          "source_url": "https://commons.wikimedia.org/wiki/File:Small_Copper_Butterfly_(Lycaena_phlaeas).webm",
+          "note": "Assistant translation/summary of cited source description; not official localization"
+        },
+        "tags": {
+          "method": "editorial",
+          "source_url": "https://commons.wikimedia.org/wiki/File:Small_Copper_Butterfly_(Lycaena_phlaeas).webm",
+          "note": "Assistant topic labels based on source description"
+        },
+        "language": {
+          "method": "source",
+          "source_url": "https://commons.wikimedia.org/wiki/File:Small_Copper_Butterfly_(Lycaena_phlaeas).webm",
+          "note": "No linguistic content: silent source category, explicit no-audio statement, or ffprobe"
+        },
+        "duration_seconds": {
+          "method": "source",
+          "source_url": "https://commons.wikimedia.org/wiki/File:Small_Copper_Butterfly_(Lycaena_phlaeas).webm",
+          "note": "Source file-page duration; not independently measured here."
+        }
+      },
+      "license_notes": "Retain source/creator/license and identify changes. Distributing adaptations requires same/compatible license. Media license differs from source-page prose license.",
+      "metadata_license": "CC-BY-SA-4.0",
+      "source_metadata": {
+        "original_title": "Small Copper Butterfly (Lycaena phlaeas).webm",
+        "description_original": "Small Copper Butterfly (Lycaena phlaeas) filmed in Tokyo on September 15, 2014. No audio.",
+        "source_id": "commons:Small_Copper_Butterfly_(Lycaena_phlaeas).webm",
+        "verification": {
+          "date": "2026-10-03",
+          "source_page_live_browser": true,
+          "direct_url_observed_in_original_file_link": true,
+          "download_verified": false,
+          "playback_verified": false
+        },
+        "source_categories": [],
+        "license_evidence_url": "https://commons.wikimedia.org/wiki/File:Small_Copper_Butterfly_(Lycaena_phlaeas).webm",
+        "required_source_credit": null,
+        "child_suitability": "Unreviewed; no official suitability or educational efficacy assertion",
+        "metadata_license_url": "https://creativecommons.org/licenses/by-sa/4.0/"
+      },
+      "min_age": null,
+      "max_age": null,
+      "age_rating_source": null,
+      "subtitle_text": null,
+      "subtitle_source_url": null,
+      "subtitle_license": null,
+      "expected_sha256": null
+    },
+    {
+      "canonical_url": "https://commons.wikimedia.org/wiki/File:Solar_System_Resource_Page_(SVS20391).webm",
+      "original_url": "https://upload.wikimedia.org/wikipedia/commons/0/08/Solar_System_Resource_Page_%28SVS20391%29.webm?utm_source=commons.wikimedia.org&utm_campaign=index&utm_content=original",
+      "title": "태양계를 가로지르는 짧은 여행",
+      "description": "태양계를 빠르게 가로지르는 양식화된 시각화 영상.",
+      "tags": [
+        "시각화",
+        "우주",
+        "태양계",
+        "행성"
+      ],
+      "characters": [],
+      "language": "und",
+      "media_format": "webm",
+      "duration_seconds": 14.0,
+      "author": "NASA's Scientific Visualization Studio; Jenny McElligott; David Ladd; Michael Lentz; Walt Feimer",
+      "license": "PD-USGov-NASA",
+      "license_url": "https://www.nasa.gov/nasa-brand-center/images-and-media/",
+      "attribution": "Solar System Resource Page (SVS20391).webm — NASA's Scientific Visualization Studio; Jenny McElligott; David Ladd; Michael Lentz; Walt Feimer. Source: https://commons.wikimedia.org/wiki/File:Solar_System_Resource_Page_(SVS20391).webm. PD-USGov-NASA: https://www.nasa.gov/nasa-brand-center/images-and-media/. Korean metadata is an assistant-produced translation/summary; original media unchanged.",
+      "rights_verified": true,
+      "metadata_provenance": {
+        "title": {
+          "method": "assistant_translation",
+          "source_url": "https://commons.wikimedia.org/wiki/File:Solar_System_Resource_Page_(SVS20391).webm",
+          "note": "Assistant translation/summary of cited source description; not official localization"
+        },
+        "description": {
+          "method": "assistant_translation",
+          "source_url": "https://commons.wikimedia.org/wiki/File:Solar_System_Resource_Page_(SVS20391).webm",
+          "note": "Assistant translation/summary of cited source description; not official localization"
+        },
+        "tags": {
+          "method": "editorial",
+          "source_url": "https://commons.wikimedia.org/wiki/File:Solar_System_Resource_Page_(SVS20391).webm",
+          "note": "Assistant topic labels based on source description"
+        },
+        "language": {
+          "method": "unknown",
+          "source_url": "https://commons.wikimedia.org/wiki/File:Solar_System_Resource_Page_(SVS20391).webm",
+          "note": "Unknown; not inferred from metadata language"
+        },
+        "duration_seconds": {
+          "method": "source",
+          "source_url": "https://commons.wikimedia.org/wiki/File:Solar_System_Resource_Page_(SVS20391).webm",
+          "note": "Source file-page duration; not independently measured here."
+        }
+      },
+      "license_notes": "Commons marks public domain in United States. NASA requires source acknowledgement, no implied endorsement; third-party materials, logos and identifiable-person rights may impose limits. Not a blanket worldwide clearance.",
+      "metadata_license": "CC-BY-SA-4.0",
+      "source_metadata": {
+        "original_title": "Solar System Resource Page (SVS20391).webm",
+        "description_original": "A quick stylized solar system fly through",
+        "source_id": "commons:Solar_System_Resource_Page_(SVS20391).webm",
+        "verification": {
+          "date": "2026-10-03",
+          "source_page_live_browser": true,
+          "direct_url_observed_in_original_file_link": true,
+          "download_verified": false,
+          "playback_verified": false
+        },
+        "source_categories": [
+          "NASA videos in 2024",
+          "Videos of the Solar System"
+        ],
+        "license_evidence_url": "https://commons.wikimedia.org/wiki/File:Solar_System_Resource_Page_(SVS20391).webm",
+        "required_source_credit": "NASA's Goddard Space Flight Center Conceptual Image Lab",
+        "child_suitability": "Unreviewed; no official suitability or educational efficacy assertion",
+        "metadata_license_url": "https://creativecommons.org/licenses/by-sa/4.0/"
+      },
+      "min_age": null,
+      "max_age": null,
+      "age_rating_source": null,
+      "subtitle_text": null,
+      "subtitle_source_url": null,
+      "subtitle_license": null,
+      "expected_sha256": null
+    }
+  ]
+}

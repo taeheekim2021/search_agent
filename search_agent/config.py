@@ -21,6 +21,7 @@ class Settings(BaseSettings):
         env_prefix="SEARCH_", env_nested_delimiter="__", env_file=".env", extra="ignore"
     )
     mode: Literal["real", "mock"] = "real"
+    backend: Literal["sample", "opensearch"] = "sample"
     catalog_path: Path = Path("data/sample_catalog.json")
     cache_dir: Path = Path(".cache/embeddings")
     hf_cache_dir: Path = Path(".cache/huggingface")
@@ -32,6 +33,8 @@ class Settings(BaseSettings):
 
     @model_validator(mode="after")
     def limits(self):
+        if self.backend == "opensearch" and (self.mode != "real" or self.dimensions != 2560):
+            raise ValueError("OpenSearch media backend requires real mode and 2560 dimensions")
         if self.result_top_n > self.candidate_top_k:
             raise ValueError("result_top_n must be <= candidate_top_k")
         if self.reranker.max_length > 512:

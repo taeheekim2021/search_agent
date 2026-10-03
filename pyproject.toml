@@ -4,10 +4,10 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "kids-search-agent"
-version = "0.1.0"
+version = "0.2.0"
 description = "Korean sample content search with Qwen embeddings and BGE reranking"
 requires-python = ">=3.12"
-dependencies = ["fastapi>=0.115,<1", "uvicorn>=0.34,<1", "pydantic-settings>=2.7,<3", "numpy>=1.26,<3"]
+dependencies = ["fastapi>=0.115,<1", "uvicorn>=0.34,<1", "pydantic-settings>=2.7,<3", "numpy>=1.26,<3", "httpx>=0.28,<1"]
 
 [project.optional-dependencies]
 ui-test = ["playwright>=1.50,<2"]
