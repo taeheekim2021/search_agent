@@ -26,6 +26,7 @@ def index_mapping(identity: dict) -> dict:
         raise ValueError("Immutable embedding revision is required")
     keyword_fields = [
         "content_id",
+        "source_id",
         "canonical_url",
         "original_url",
         "tags",
@@ -186,11 +187,20 @@ class OpenSearchStore:
             self.request("PUT", f"/{self.index}", body=expected)
         else:
             self.validate_mapping(current, identity)
+            if "source_id" not in current[self.index]["mappings"]["properties"]:
+                # Additive compatibility for previously created media-v1 indexes.
+                self.request(
+                    "PUT",
+                    f"/{self.index}/_mapping",
+                    body={"properties": {"source_id": {"type": "keyword"}}},
+                )
 
     def validate_mapping(self, mapping: dict, identity: dict):
         try:
             actual = mapping[self.index]["mappings"]
             vector = actual["properties"]["embedding"]
+            if actual["properties"].get("source_id", {"type": "keyword"}).get("type") != "keyword":
+                raise OpenSearchError("Incompatible source_id mapping")
             if actual["_meta"] != index_mapping(identity)["mappings"]["_meta"]:
                 raise OpenSearchError(
                     "Embedding identity/schema mismatch; create a new index and reingest"
@@ -212,7 +222,7 @@ class OpenSearchStore:
 
     def upsert(self, record: MediaRecord, vector):
         v = normalize([vector], 1, DIMENSIONS)[0]
-        doc = record.model_dump()
+        doc = record.model_dump(exclude_none=True)
         doc["content_id"] = record.content_id
         doc["search_text"] = record.passage()
         doc["embedding"] = v.tolist()

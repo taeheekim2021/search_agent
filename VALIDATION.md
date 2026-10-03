@@ -72,3 +72,16 @@ PyTorch/Transformers 모델 의존성과 수 GB 가중치를 다운로드하지 
 - 같은 펭귄 영상의 공식 Library materialize도 `oaisdmntprsouthcentralus.blob.core.windows.net`에서 `library file transfer failed: download failed`로 실패했습니다. 바이너리는 이 실행환경에 도착하지 않았습니다. 제공된 출처 조사에서의 ffprobe 확인 사실과 현재 실행환경의 검증을 구분합니다.
 - 실제 CLI 단일항목 dry-run 성공(네트워크/쓰기/모델 없음). `--download-only`는 관리형 프록시를 발견해 `UnsafeDownload`/`stage:download`, `indexed:0`, `bytes_accounted:0`으로 안전하게 중단됐습니다. 다운로드 구현은 직접 소켓으로 관리형 egress를 우회하지 않습니다.
 - Hugging Face 403 및 환경 Edit 실패 상태는 유지됩니다. 가중치/Git LFS는 변경하지 않았습니다. 실제 원본 취득 → Qwen 임베딩 → OpenSearch → BGE 전체 파이프라인과 실제 모델 지연은 **미검증**입니다.
+
+# 메타데이터 전용 기본 경로 변경 (2026-10-03 KST)
+
+사용자의 영상 다운로드 불필요 요청에 따라 기본 `ingest --execute`를 metadata-only로 변경했습니다. 실제 영상 다운로드/업로드를 실행하지 않았고 기존 영상 파일·다운로드 receipt는 삭제하지 않았습니다. 시작 시 원격 main `222f5358eb6c12578c3978b3958c7869a36ec31f`와 로컬 상태를 확인했으며 그 시점에 신규 CI/workflow 변경은 없었습니다. CI를 새로 만들지 않았습니다.
+
+- 기본 인제스트는 미디어 저장소를 생성하거나 호출하지 않으며 allowlist·미디어 DNS·원본 URL 접속을 하지 않습니다. OpenSearch와 실제 Qwen 모델 호출은 별도입니다. `--download-media`를 명시해야 과거 파일 취득 경로가 활성화됩니다.
+- `source_id`를 직접 보존하고, 구 데이터는 중첩된 source_id/canonical URL에서 보완합니다. stable content ID는 그대로 유지합니다. `local_path`, `checksum_sha256`, `size_bytes`, 미디어 형식은 선택 정보이며 없다고 색인 실패하지 않습니다. 미상 연령·자막을 생성하지 않습니다.
+- 새 `data/metadata_manifest.json`은 검증된 Commons 8개 메타데이터와 개별/파생 라이선스를 유지하며 원본 파일 체크섬을 요구하지 않습니다. 기존 source/media manifest는 보존했습니다.
+- metadata-only 기본 CLI, 미디어 네트워크/저장소 미호출, 기존 파일/receipt 보존, 필수 메타데이터 검증, 라이선스/provenance, 재시도, 반복 upsert, 구 인덱스의 source_id keyword 필드 추가 계약 테스트를 포함합니다.
+- **전체 96 passed**, 12.24초. 기존 공식 OpenSearch 2.19.3 이미지의 임시 루프백 서버에서 인증·TLS/hostname 검증을 유지하며 메타데이터 전용 인제스트와 2560차원 매핑·BM25/k-NN 필터·idempotency를 실제 검증했습니다. 테스트 벡터는 명시적 fixture이고 실제 Qwen/BGE 모델 추론이 아닙니다.
+- 기본 테스트 명령은 **95 passed, 1 skipped**(live 서버 opt-in), 기존 Starlette deprecation warning 1개. Ruff lint/format 및 mypy(20 source files) 통과했습니다.
+- 단일항목 기본 CLI dry-run은 `ingest_mode: metadata_only`, `media_download_performed: false`, `network_accessed: false`로 성공했습니다.
+- 테스트용 인덱스·임시 컨테이너·임시 인증정보는 정리했습니다. 원본 미디어 파일을 취득하거나 삭제하지 않았습니다. 기존 모델 요구는 유지하고 실제 Qwen/BGE 추론 미검증 상태도 그대로입니다.

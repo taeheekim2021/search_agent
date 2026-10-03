@@ -1,6 +1,6 @@
 # 미디어·메타데이터 출처와 라이선스
 
-`source_manifest.json`은 2026-10-03에 확인한 Wikimedia Commons 8개 파일의 출처 기록이며 **CC BY-SA 4.0**입니다. Commons 설명문에서 파생한 한국어 제목/설명과 주제 태그는 assistant 번역·요약/편집 메타데이터로, 공식 현지화·자막·대본·연령등급이 아닙니다. `media_manifest.json`, `media_manifest.small.json`은 그 기록을 인제스트 스키마로 변환한 파생 메타데이터로, 출처·변경 사항·동일 라이선스를 유지합니다.
+`source_manifest.json`은 2026-10-03에 확인한 Wikimedia Commons 8개 파일의 출처 기록이며 **CC BY-SA 4.0**입니다. Commons 설명문에서 파생한 한국어 제목/설명과 주제 태그는 assistant 번역·요약/편집 메타데이터로, 공식 현지화·자막·대본·연령등급이 아닙니다. `metadata_manifest.json`, `media_manifest.json`, `media_manifest.small.json`은 그 기록을 인제스트 스키마로 변환한 파생 메타데이터로, 출처·변경 사항·동일 라이선스를 유지합니다.
 
 원본 manifest의 개별 저자, 원문 설명, `license_evidence_url`, attribution과 특기사항을 그대로 보존합니다. Commons 페이지의 설명문 라이선스와 구조화된 데이터(CC0), 미디어 파일 라이선스를 혼동하지 않습니다. 저장소 코드의 라이선스가 아래 자료의 라이선스를 덮어쓰지 않습니다. 미디어 바이너리는 Git에 포함하지 않습니다.
 

@@ -54,13 +54,42 @@ class Ingestor:
         cache: EmbeddingCache | None = None,
     ):
         self.settings = settings
-        self.storage = storage or LocalMediaStore(settings)
+        self.storage = storage
         self.embedding, self.index = embedding, index
         self.cache = cache or EmbeddingCache(settings.root / ".vectors")
 
     def run(
-        self, manifest: MediaManifest, *, dry_run: bool = True, download_only: bool = False
+        self,
+        manifest: MediaManifest,
+        *,
+        dry_run: bool = True,
+        download_only: bool = False,
+        download_media: bool = False,
     ) -> dict:
+        metadata_only = not (download_only or download_media)
+        if metadata_only:
+            if dry_run:
+                return {
+                    "dry_run": True,
+                    "network_accessed": False,
+                    "status": "planned",
+                    "ingest_mode": "metadata_only",
+                    "media_download_performed": False,
+                    "entries": [
+                        {
+                            "content_id": e.content_id,
+                            "source_id": e.source_id,
+                            "title": e.title,
+                            "license": e.license,
+                            "age_known": e.min_age is not None,
+                        }
+                        for e in manifest.entries
+                    ],
+                }
+            if self.embedding is None or self.index is None:
+                raise ValueError("Indexing requires real embedding and OpenSearch adapters")
+            with media_lock(self.settings.root):
+                return self._run_metadata(manifest)
         policy = URLPolicy(self.settings.allowed_domains)
         for entry in manifest.entries:
             policy.check(entry.original_url)
@@ -84,8 +113,67 @@ class Ingestor:
             }
         if not download_only and (self.embedding is None or self.index is None):
             raise ValueError("Indexing requires real embedding and OpenSearch adapters")
+        if self.storage is None:
+            self.storage = LocalMediaStore(self.settings)
         with media_lock(self.settings.root):
             return self._run(manifest, download_only=download_only)
+
+    def _run_metadata(self, manifest: MediaManifest) -> dict:
+        assert self.embedding is not None and self.index is not None
+        results = []
+        ready, setup_error = False, None
+        for entry in manifest.entries:
+            # Separate receipt preserves any previously acquired file and its download receipt.
+            path = self.settings.root / f"{entry.content_id}.metadata-receipt.json"
+            receipt = {
+                "content_id": entry.content_id,
+                "source_id": entry.source_id,
+                "ingest_mode": "metadata_only",
+                "media_download_performed": False,
+                "status": "pending",
+                "stage": "embedding",
+            }
+            try:
+                if setup_error is not None:
+                    raise setup_error
+                if not ready:
+                    try:
+                        identity = self.embedding.identity
+                        receipt["stage"] = "index_setup"
+                        self.index.ensure_index(identity)
+                        ready = True
+                    except Exception as exc:
+                        setup_error = exc
+                        raise
+                receipt["stage"] = "embedding"
+                vector = self.cache.documents(self.embedding, [entry])[0]
+                record = MediaRecord(
+                    **entry.model_dump(), retrieved_at=datetime.now(UTC).isoformat()
+                )
+                receipt["stage"] = "index_upsert"
+                self.index.upsert(record, vector)
+                receipt.update(status="indexed", stage="complete")
+            except Exception as exc:  # noqa: BLE001 — sanitized per-item receipt contract
+                receipt.update(status="failed", error_type=type(exc).__name__)
+                if isinstance(exc, ModelError):
+                    receipt["stage"] = exc.stage
+            try:
+                atomic_json(path, receipt)
+            except (ValueError, OSError):
+                receipt.update(status="failed", stage="receipt", receipt_write_failed=True)
+            results.append(receipt)
+        return {
+            "dry_run": False,
+            "ingest_mode": "metadata_only",
+            "media_download_performed": False,
+            "bytes_accounted": 0,
+            "downloaded_only": 0,
+            "status": "partial_failure"
+            if any(r["status"] == "failed" for r in results)
+            else "completed",
+            "indexed": sum(r["status"] == "indexed" for r in results),
+            "entries": results,
+        }
 
     def _run(self, manifest: MediaManifest, *, download_only: bool) -> dict:
         results, used = [], 0
@@ -114,6 +202,7 @@ class Ingestor:
                         entry, prior
                     )
                 else:
+                    assert self.storage is not None
                     downloaded = self.storage.download(entry, prior)
                 used += downloaded.size_bytes
                 if used > self.settings.total_max_bytes:
@@ -209,6 +298,7 @@ def adapt_commons_source(source: dict) -> MediaManifest:
         )
         entries.append(
             MediaEntry(
+                source_id=asset["source_id"],
                 canonical_url=url,
                 original_url=asset["media_url"],
                 title=asset["title_ko"],

@@ -16,7 +16,7 @@ from .opensearch import OpenSearchStore
 
 def main() -> int:
     parser = argparse.ArgumentParser(
-        description="Validate/download/index licensed media. Default: dry-run."
+        description="Validate/index licensed media metadata without downloading videos. Default: dry-run."
     )
     commands = parser.add_subparsers(dest="command", required=True)
     convert = commands.add_parser(
@@ -37,12 +37,21 @@ def main() -> int:
     ingest.add_argument("--limit", type=int, default=None)
     mode = ingest.add_mutually_exclusive_group()
     mode.add_argument(
-        "--execute", action="store_true", help="Download then run real Qwen and upsert OpenSearch"
+        "--execute",
+        action="store_true",
+        help="Run real Qwen and upsert metadata in OpenSearch; no media download",
     )
     mode.add_argument(
         "--download-only", action="store_true", help="Download only; no model/OpenSearch calls"
     )
+    ingest.add_argument(
+        "--download-media",
+        action="store_true",
+        help="Optional legacy download+index path; requires --execute",
+    )
     args = parser.parse_args()
+    if args.command == "ingest" and args.download_media and not args.execute:
+        parser.error("--download-media requires --execute")
     store = None
     try:
         if args.command == "adapt-commons":
@@ -81,6 +90,7 @@ def main() -> int:
             manifest,
             dry_run=not (args.execute or args.download_only),
             download_only=args.download_only,
+            download_media=args.download_media,
         )
         print(json.dumps(result, ensure_ascii=False, indent=2))
         return 1 if result["status"] == "partial_failure" else 0

@@ -8,8 +8,9 @@ import pytest
 
 from search_agent.config import QWEN_ID
 from search_agent.domain import Conditions
-from search_agent.media.config import OpenSearchSettings
-from search_agent.media.domain import MediaRecord
+from search_agent.media.config import MediaSettings, OpenSearchSettings
+from search_agent.media.domain import MediaEntry, MediaManifest, MediaRecord
+from search_agent.media.ingest import Ingestor
 from search_agent.media.opensearch import OpenSearchStore, bm25_query, vector_query
 
 pytestmark = pytest.mark.skipif(
@@ -17,7 +18,7 @@ pytestmark = pytest.mark.skipif(
 )
 
 
-def test_live_2560_mapping_filters_upsert_and_identity():
+def test_live_2560_mapping_filters_upsert_and_identity(tmp_path):
     config = OpenSearchSettings().model_copy(
         update={"index": "search-agent-test-" + uuid.uuid4().hex}
     )
@@ -61,14 +62,37 @@ def test_live_2560_mapping_filters_upsert_and_identity():
                 attribution="Synthetic integration fixture",
                 rights_verified=True,
                 metadata_provenance=provenance,
-                checksum_sha256="a" * 64,
-                local_path="synthetic-not-a-real-file.webm",
-                size_bytes=1,
+                source_id=f"fixture:{name}",
                 retrieved_at="2026-10-03T00:00:00Z",
             )
             ids.append(record.content_id)
             store.upsert(record, vector)
             store.upsert(record, vector)
+
+        # Exercise the default metadata-only CLI service against the live server, too.
+        class FixtureEmbedding:
+            @property
+            def identity(self):
+                return identity
+
+            def documents(self, texts):
+                return np.tile(vector, (len(texts), 1))
+
+        class ForbiddenMediaStorage:
+            def download(self, *args, **kwargs):
+                raise AssertionError("No media download allowed")
+
+        entry = MediaEntry.model_validate(
+            record.model_dump(
+                exclude={"retrieved_at", "local_path", "size_bytes", "checksum_sha256"}
+            )
+        )
+        ingestor = Ingestor(
+            MediaSettings(root=tmp_path), ForbiddenMediaStorage(), FixtureEmbedding(), store
+        )
+        for _ in range(2):
+            result = ingestor.run(MediaManifest(version=1, entries=[entry]), dry_run=False)
+            assert result["indexed"] == 1 and result["media_download_performed"] is False
         assert store.count(Conditions()) == 4  # Repeated PUT does not create duplicates.
         store.verify_identity(identity)
         assert "펭귄" in store.vocabulary()[0]
@@ -80,6 +104,15 @@ def test_live_2560_mapping_filters_upsert_and_identity():
         assert not store.search(vector_query(vector, Conditions(age=18), 1))
         all_penguins = store.search(vector_query(vector, Conditions(topics=["펭귄"]), 10))
         assert len(all_penguins) == 3
+        assert all(
+            r.local_path is None and r.checksum_sha256 is None and r.size_bytes is None
+            for r in all_penguins
+        )
+        assert {r.source_id for r in all_penguins} == {
+            "fixture:known-age",
+            "fixture:older",
+            "fixture:unknown",
+        }
         assert any(r.min_age is None for r in all_penguins)
     finally:
         store.request("DELETE", f"/{config.index}", allow_not_found=True)

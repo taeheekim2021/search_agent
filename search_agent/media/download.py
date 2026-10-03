@@ -193,6 +193,8 @@ class LocalMediaStore:
         self.transport = transport or PinnedHTTPSTransport()
 
     def target(self, entry: MediaEntry) -> Path:
+        if entry.media_format is None:
+            raise ValueError("Downloading requires a known media_format")
         root = self.settings.root.resolve()
         target = root / f"{entry.content_id}.{entry.media_format}"
         if target.is_symlink() or target.resolve().parent != root:
@@ -299,7 +301,7 @@ class LocalMediaStore:
                 temporary.unlink(missing_ok=True)
 
 
-def valid_magic(media_format: str, prefix: bytes) -> bool:
+def valid_magic(media_format: str | None, prefix: bytes) -> bool:
     if media_format == "webm":
         return prefix.startswith(b"\x1a\x45\xdf\xa3")
     if media_format in ("ogg", "ogv"):

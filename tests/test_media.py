@@ -278,7 +278,7 @@ def test_opensearch_secure_defaults_and_errors(record):
     store.upsert(record, np.ones(2560))
     assert seen[0].url == seen[1].url
     body = json.loads(seen[0].content)
-    assert body["content_id"] == record.content_id and body["min_age"] is None
+    assert body["content_id"] == record.content_id and body.get("min_age") is None
     assert body["metadata_provenance"] and body["checksum_sha256"]
     assert np.linalg.norm(body["embedding"]) == pytest.approx(1)
     with pytest.raises(OpenSearchError):
@@ -295,9 +295,9 @@ def test_partial_failure_then_recover(entry, tmp_path):
     manifest = MediaManifest(version=1, entries=[entry, entry])
     assert ingestor.run(manifest)["dry_run"]
     assert not list(tmp_path.iterdir())
-    first = ingestor.run(manifest, dry_run=False)
+    first = ingestor.run(manifest, dry_run=False, download_media=True)
     assert first["status"] == "partial_failure" and first["entries"][0]["stage"] == "index_upsert"
-    second = ingestor.run(manifest, dry_run=False)
+    second = ingestor.run(manifest, dry_run=False, download_media=True)
     assert second["indexed"] == 1 and second["entries"][0]["download"]["reused"]
     assert store.transport.open.call_count == 1
     assert index.upsert.call_count == 2

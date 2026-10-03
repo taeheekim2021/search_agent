@@ -33,6 +33,7 @@ def public_https_url(value: str) -> str:
 
 class MediaEntry(BaseModel):
     model_config = ConfigDict(extra="forbid", str_strip_whitespace=True)
+    source_id: str | None = Field(default=None, min_length=1, max_length=4096)
     canonical_url: str = Field(max_length=4096)
     original_url: str = Field(max_length=4096)
     title: str = Field(min_length=1, max_length=500)
@@ -40,7 +41,7 @@ class MediaEntry(BaseModel):
     tags: list[str] = Field(default_factory=list, max_length=100)
     characters: list[str] = Field(default_factory=list, max_length=100)
     language: str = Field(pattern=r"^[a-z]{2,3}(?:-[A-Za-z0-9]+)*$", default="und")
-    media_format: Literal["webm", "ogv", "mp4", "ogg", "mp3", "wav", "flac"]
+    media_format: Literal["webm", "ogv", "mp4", "ogg", "mp3", "wav", "flac"] | None = None
     duration_seconds: float | None = Field(default=None, gt=0, allow_inf_nan=False)
     author: str = Field(min_length=1, max_length=1000)
     license: Literal[
@@ -87,7 +88,13 @@ class MediaEntry(BaseModel):
 
     @model_validator(mode="after")
     def provenance(self):
-        required = {"title", "description", "tags", "language", "duration_seconds"}
+        if self.source_id is None:
+            self.source_id = str(self.source_metadata.get("source_id") or self.canonical_url)
+        required = {"title", "description", "tags"}
+        if self.language != "und":
+            required.add("language")
+        if self.duration_seconds is not None:
+            required.add("duration_seconds")
         if required - self.metadata_provenance.keys():
             raise ValueError(
                 "Metadata provenance required for title/description/tags/language/duration_seconds"
@@ -132,9 +139,9 @@ class MediaManifest(BaseModel):
 
 
 class MediaRecord(MediaEntry):
-    checksum_sha256: str = Field(pattern=r"^[a-f0-9]{64}$")
-    local_path: str
-    size_bytes: int = Field(gt=0)
+    checksum_sha256: str | None = Field(default=None, pattern=r"^[a-f0-9]{64}$")
+    local_path: str | None = None
+    size_bytes: int | None = Field(default=None, gt=0)
     retrieved_at: str
 
 
