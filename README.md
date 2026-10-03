@@ -1,4 +1,4 @@
-# 아이들나라 콘텐츠 SearchAgent — 가상 샘플 프로토타입
+#  콘텐츠 SearchAgent — 가상 샘플 프로토타입
 
 한국어 자연어 질의를 나이·주제·캐릭터 조건으로 해석하고, 키워드 + **Qwen/Qwen3-Embedding-4B** 의미검색 후보를 합친 뒤 **BAAI/bge-reranker-v2-m3**로 재정렬합니다. FastAPI와 정적 HTML UI만 사용합니다. 외부 API 요금이나 별도 검색 인프라가 필요하지 않습니다.
 
