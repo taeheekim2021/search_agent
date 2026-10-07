@@ -1,9 +1,11 @@
 import logging
 from pathlib import Path
 
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Request
 from fastapi.responses import FileResponse
+from fastapi.staticfiles import StaticFiles
 
+from .admin import create_admin_router
 from .catalog import JsonCatalog
 from .config import BGE_ID, QWEN_ID, Settings
 from .domain import SearchRequest, SearchResponse
@@ -38,10 +40,34 @@ def create_app(
             reranker = BGEReranker(config.reranker, str(config.hf_cache_dir))
         agent = SearchAgent(config, JsonCatalog(config.catalog_path), semantic, reranker)
     app = FastAPI(title="아이들나라 SearchAgent · 콘텐츠 검색", version="0.2.0")
+    static_dir = Path(__file__).parent / "static"
+
+    @app.middleware("http")
+    async def admin_response_headers(request: Request, call_next):
+        response = await call_next(request)
+        if request.url.path == "/admin" or request.url.path.startswith(("/admin/", "/api/admin/")):
+            response.headers["Cache-Control"] = "no-store"
+            response.headers["X-Content-Type-Options"] = "nosniff"
+            response.headers["X-Frame-Options"] = "DENY"
+            response.headers["Referrer-Policy"] = "no-referrer"
+            response.headers["Content-Security-Policy"] = (
+                "default-src 'none'; script-src 'self'; style-src 'self'; "
+                "connect-src 'self'; img-src 'self' data:; font-src 'self'; "
+                "base-uri 'none'; form-action 'self'; frame-ancestors 'none'"
+            )
+        return response
+
+    app.include_router(create_admin_router(config, agent))
+    app.mount("/admin/assets", StaticFiles(directory=static_dir), name="admin-assets")
+
+    @app.get("/admin", include_in_schema=False)
+    @app.get("/admin/", include_in_schema=False)
+    def admin_index():
+        return FileResponse(static_dir / "admin.html")
 
     @app.get("/", include_in_schema=False)
     def index():
-        return FileResponse(Path(__file__).parent / "static" / "index.html")
+        return FileResponse(static_dir / "index.html")
 
     @app.get("/health")
     def health():

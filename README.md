@@ -6,6 +6,8 @@
 
 메타데이터 전용 색인 실행법, 연령 미상 처리, OpenSearch 보안 연결과 통합 테스트는 **[MEDIA.md](MEDIA.md)**를 참고하세요. Commons 8개 출처 목록과 영상 파일·체크섬이 필요 없는 `data/metadata_manifest.json`을 포함합니다. 아래의 빠른 실행은 기존 가상 샘플 UI입니다.
 
+**관리자 서비스는 `/admin`에서 사용합니다.** 운영 현황, 콘텐츠 목록·상세·필터, 검색 테스트, 매니페스트 검증·메타데이터 적재, OpenSearch 인덱스 준비·새로고침을 제공합니다. 관리자 키 설정과 기능별 실행 조건은 **[ADMIN.md](ADMIN.md)**에 정리했습니다. `SEARCH_ADMIN_API_KEY`를 설정하기 전에는 관리자 API가 비활성 상태입니다.
+
 ## 빠른 실행: 명시적 모의 UI
 
 Python 3.12 이상, 저장소 루트에서 실행합니다.
@@ -73,7 +75,7 @@ Qwen 4B 가중치만 16bit 약 8GB, float32 약 16GB입니다. BGE, 토크나이
 
 ## API 계약
 
-`GET /` UI, `GET /health` 서버 모드와 기본 TopK/TopN, `POST /api/search` 검색, `GET /docs` OpenAPI 문서입니다.
+`GET /` 검색 UI, `GET /admin` 관리자 UI, `GET /health` 서버 모드와 기본 TopK/TopN, `POST /api/search` 검색, `GET /docs` OpenAPI 문서입니다. `/api/admin/*`는 별도의 관리자 Bearer 키가 필요합니다.
 
 ```bash
 curl -s http://127.0.0.1:8000/api/search \
@@ -98,6 +100,8 @@ python scripts/smoke_models.py --run-real
 
 단위/계약 테스트는 작은 고정 fixture와 NumPy 기반 HF test double을 사용합니다. 실제 모델 추론이나 품질 검증이 아닙니다. 스모크 스크립트만 실제 모델을 실행하며 한국어 관련/무관 문장의 Qwen 코사인, BGE 원시 점수, 차원·정규화, 로딩 포함 지연을 출력하고 관련 문장의 우선 순위를 검증합니다. 실패 시 비정상 종료하며 가짜 결과를 출력하지 않습니다.
 
-브라우저 검증은 모의 서버 실행 후 `pip install -e '.[ui-test]'`와 `python scripts/smoke_ui.py`로 재현합니다. 이 스크립트는 `/usr/bin/chromium`이 필요합니다. 검증된 경량 패키지 버전은 `requirements-tested.txt`에 있으며, 모델 의존성은 이 환경에서 설치/검증하지 않았습니다.
+브라우저 검증은 모의 서버 실행 후 `pip install -e '.[ui-test]'`와 `python scripts/smoke_ui.py`로 재현합니다. 기본 브라우저 경로는 `/usr/bin/chromium`이며, `PLAYWRIGHT_CHROMIUM_EXECUTABLE`로 변경할 수 있습니다. 관리자 화면은 같은 서버의 키를 `SEARCH_ADMIN_API_KEY`에 설정한 뒤 `python scripts/smoke_admin.py`로 검사합니다. 관리자 스크립트는 별도 경로를 지정하지 않으면 Playwright 설치 브라우저를 사용합니다. 검증된 경량 패키지 버전은 `requirements-tested.txt`에 있으며, 모델 의존성은 이 환경에서 설치/검증하지 않았습니다.
 
-실제 테스트 현황과 남은 제한은 [VALIDATION.md](VALIDATION.md)에 기록합니다. 이 프로토타입은 로컬 검토용이며 인증/운영용 배포를 포함하지 않습니다. 서비스 배포는 포함하지 않습니다.
+GitHub Actions는 단위·계약 테스트, 임시 OpenSearch 2.19.3 서버를 사용하는 관리자 API 통합 테스트, 모의 서버의 관리자·기존 검색 화면 브라우저 테스트를 실행합니다. 관리자 화면 캡처는 CI 아티팩트로 7일간 보관합니다. OpenSearch 테스트의 벡터와 모델은 synthetic fixture이며 실제 Qwen/BGE 추론·검색 품질·모델 지연 검증은 포함하지 않습니다.
+
+실제 테스트 현황과 남은 제한은 [VALIDATION.md](VALIDATION.md)에 기록합니다. 관리자 API에는 공유 키 인증을 적용했으며 기존 일반 검색 API는 공개 상태입니다. 사용자별 계정·권한, 운영 환경 배포는 포함하지 않습니다.

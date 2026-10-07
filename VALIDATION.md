@@ -85,3 +85,18 @@ PyTorch/Transformers 모델 의존성과 수 GB 가중치를 다운로드하지 
 - 기본 테스트 명령은 **95 passed, 1 skipped**(live 서버 opt-in), 기존 Starlette deprecation warning 1개. Ruff lint/format 및 mypy(20 source files) 통과했습니다.
 - 단일항목 기본 CLI dry-run은 `ingest_mode: metadata_only`, `media_download_performed: false`, `network_accessed: false`로 성공했습니다.
 - 테스트용 인덱스·임시 컨테이너·임시 인증정보는 정리했습니다. 원본 미디어 파일을 취득하거나 삭제하지 않았습니다. 기존 모델 요구는 유지하고 실제 Qwen/BGE 추론 미검증 상태도 그대로입니다.
+
+# 관리자 서비스 확장 검증 (2026-10-07)
+
+원격 `main`의 `1c55afaad10b2e187798f6a45b0891c4c5633b19`를 기준으로 기존 FastAPI 서비스에 `/admin`과 `/api/admin/*`를 추가했습니다. 실행 중인 카탈로그·모델 어댑터·OpenSearch 연결을 재사용합니다. 자세한 실행 방법과 API 계약은 [ADMIN.md](ADMIN.md)에 있습니다.
+
+- 관리자 키를 설정해야 API가 활성화됩니다. 인증은 본문 파싱 전에 검사하며 요청 본문은 2,000,000바이트, 적재 배치는 기본 100개로 제한합니다. 검색·적재·인덱스 쓰기는 기존 검색 에이전트와 잠금을 공유합니다.
+- 상태·콘텐츠 조회, 검색 테스트, 메타데이터 검증·확인 후 적재, 설정된 인덱스 준비·새로고침을 구현했습니다. 모델 상태 조회는 실제 모델 로딩이나 추론을 실행하지 않습니다.
+- **로컬 단위·계약 테스트 145 passed**: 기존 95개와 신규 관리자 50개입니다. 인증·본문 크기·엄격한 실행 확인·페이지 조회·모델 지연 로딩·OpenSearch 응답 검증·적재 캐시와 처리 기록·부분 실패·잠금 충돌을 검증했습니다. 기존 Starlette TestClient의 httpx 지원 변경 예정 경고 1개가 있으며 테스트는 통과합니다.
+- Ruff lint/format과 mypy `search_agent scripts` 검사를 통과했습니다. 빌드한 Python wheel에 관리자 API와 HTML/CSS/JS, 기존 검색 HTML이 포함되는 것도 확인했습니다.
+- 실제 로컬 Uvicorn 모의 서버와 Chromium/Playwright에서 관리자 키 불일치·정상 연결, 12개 콘텐츠 조회·상세·ID 필터, 공룡 검색 결과 3개, 네트워크·파일 쓰기 없는 적재 미리보기, 악성 HTML 문자열의 텍스트 표시, 메모리에만 보관하는 키의 새로고침·연결 해제 동작을 확인했습니다. 390px 모바일에서 네 화면 모두 문서 가로 넘침과 JavaScript 오류가 없습니다.
+- 별도 브라우저 컨텍스트의 **명시적인 synthetic API 응답**으로 적재·인덱스 준비·새로고침 각각의 취소와 확인, 편집 후 미리보기 무효화, 일부 적재 실패 표시를 확인했습니다. 이 컨텍스트는 모든 API 요청을 가로채며 실제 서버나 OpenSearch에 쓰지 않습니다.
+- 기존 일반 검색 화면의 브라우저 회귀 검증도 통과했습니다: 공룡 3개, 토리 4개, 빈 결과, 반복 순서 동일, Top K/N 입력 오류, 모바일 넘침·JavaScript 오류 없음.
+- `.github/workflows/ci.yml`은 기존 CI PR #1의 파일과 동일하게 사용합니다. 이번 변경의 `tests/test_opensearch_integration.py`는 임시 OpenSearch 2.19.3 인덱스에서 관리자 상태·페이지 조회·미리보기·확인 후 적재·인덱스 준비·새로고침·검색을 실제 HTTP 경계까지 검사하도록 확장했습니다. `.github/workflows/admin-ui.yml`은 관리자·기존 검색 화면과 정적 검사를 실행하고 관리자 화면 캡처를 CI 아티팩트로 남깁니다. 최신 실행 결과는 해당 PR의 GitHub Actions 검사를 확인하세요.
+
+이 작업의 단위 테스트와 OpenSearch 통합 테스트는 synthetic 모델 어댑터·벡터를 사용합니다. **실제 Qwen/BGE 가중치 로딩·추론, 검색 품질과 모델 지연은 검증하지 않았습니다.** 운영 인덱스나 실제 미디어 데이터에 적재하지 않았으며 서비스 배포도 수행하지 않았습니다. 계정별 권한 관리, 삭제·alias 교체, 비동기 작업 큐는 이번 관리자 서비스 범위에 포함하지 않습니다.

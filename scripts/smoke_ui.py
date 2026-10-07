@@ -1,6 +1,7 @@
 """Browser smoke test against an explicitly started mock server on localhost:8000."""
 
 import argparse
+import os
 
 from playwright.sync_api import expect, sync_playwright
 
@@ -10,7 +11,10 @@ def main():
     parser.add_argument("--base-url", default="http://127.0.0.1:8000")
     args = parser.parse_args()
     with sync_playwright() as p:
-        browser = p.chromium.launch(executable_path="/usr/bin/chromium", args=["--no-sandbox"])
+        browser = p.chromium.launch(
+            executable_path=os.environ.get("PLAYWRIGHT_CHROMIUM_EXECUTABLE", "/usr/bin/chromium"),
+            args=["--no-sandbox"],
+        )
         page = browser.new_page(viewport={"width": 1200, "height": 900})
         errors = []
         page.on("pageerror", lambda error: errors.append(str(error)))
