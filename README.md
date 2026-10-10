@@ -89,6 +89,13 @@ curl -s http://127.0.0.1:8000/api/search \
 
 ## 검증과 스모크 테스트
 
+GitHub Actions의 [CI](.github/workflows/ci.yml)는 push·pull request·수동 실행 시 Python 3.12와 `.[dev]`로 두 job을 독립 실행합니다.
+
+- **Unit tests (model test doubles)**: 통합 테스트 파일을 제외한 일반 단위/계약 테스트.
+- **OpenSearch 2.19.3 (synthetic fixtures)**: 서비스 컨테이너가 준비된 뒤 `OPENSEARCH_TEST=1`로 `tests/test_opensearch_integration.py` 실행. HTTP·보안 플러그인 비활성화는 루프백에만 포트를 연 일회성 CI 컨테이너에 한정하며 운영 설정이 아닙니다.
+
+**CI 성공은 실제 Qwen/BGE 추론 성공을 의미하지 않습니다.** 모델 의존성·가중치를 설치하지 않으며 실제 모델 추론, 검색 순위 품질, 모델 지연, 실제 미디어 취득 및 전체 모델 파이프라인은 검증 범위 밖입니다. 실제 모델 검증은 아래 `smoke_models.py --run-real`을 별도로 실행해야 합니다.
+
 ```bash
 python -m pytest -q
 ruff check .
