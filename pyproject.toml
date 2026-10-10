@@ -18,7 +18,7 @@ dev = ["pytest>=8,<9", "httpx>=0.28,<1", "ruff>=0.11,<1", "mypy>=1.15,<2"]
 include = ["search_agent*"]
 
 [tool.setuptools.package-data]
-search_agent = ["static/*.html"]
+search_agent = ["static/*.html", "static/*.css", "static/*.js"]
 
 [tool.ruff]
 line-length = 100

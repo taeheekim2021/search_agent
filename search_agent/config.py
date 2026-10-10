@@ -1,7 +1,7 @@
 from pathlib import Path
 from typing import Literal
 
-from pydantic import BaseModel, Field, model_validator
+from pydantic import BaseModel, Field, SecretStr, model_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 QWEN_ID = "Qwen/Qwen3-Embedding-4B"
@@ -30,9 +30,18 @@ class Settings(BaseSettings):
     dimensions: int = Field(default=2560, ge=32, le=2560)
     candidate_top_k: int = Field(default=20, ge=1, le=100)
     result_top_n: int = Field(default=5, ge=1, le=100)
+    admin_api_key: SecretStr | None = Field(default=None, repr=False)
+    admin_max_batch_size: int = Field(default=100, ge=1, le=1000)
 
     @model_validator(mode="after")
     def limits(self):
+        if self.admin_api_key is not None:
+            key = self.admin_api_key.get_secret_value()
+            if len(key) < 32 or any(not 33 <= ord(char) <= 126 for char in key):
+                raise ValueError(
+                    "SEARCH_ADMIN_API_KEY must contain at least 32 printable ASCII "
+                    "characters without spaces"
+                )
         if self.backend == "opensearch" and (self.mode != "real" or self.dimensions != 2560):
             raise ValueError("OpenSearch media backend requires real mode and 2560 dimensions")
         if self.result_top_n > self.candidate_top_k:

@@ -1,0 +1,561 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="referrer" content="no-referrer" />
+    <title>검색 운영 콘솔 · Search Agent</title>
+    <link rel="stylesheet" href="/admin/assets/admin.css" />
+    <script src="/admin/assets/admin.js" defer></script>
+  </head>
+  <body>
+    <a class="skip-link" href="#main">본문으로 이동</a>
+    <div class="app-shell">
+      <aside class="sidebar" aria-label="관리자 메뉴">
+        <a class="brand" href="/admin" aria-label="Search Agent 관리자 홈">
+          <span class="brand-mark" aria-hidden="true"
+            ><svg viewBox="0 0 32 32">
+              <circle cx="14" cy="14" r="7"></circle>
+              <path d="m19 19 7 7M14 11v6M11 14h6"></path></svg
+          ></span>
+          <span><strong>Search Agent</strong><small>아이들나라 · 검색 운영</small></span>
+        </a>
+        <p class="nav-caption">WORKSPACE</p>
+        <nav class="navigation" role="tablist" aria-label="운영 화면" aria-orientation="vertical">
+          <button
+            class="nav-item active"
+            id="tab-overview"
+            role="tab"
+            aria-selected="true"
+            aria-controls="panel-overview"
+            data-view="overview"
+            disabled
+          >
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <rect x="3" y="3" width="7" height="7" rx="1.5"></rect>
+              <rect x="14" y="3" width="7" height="7" rx="1.5"></rect>
+              <rect x="3" y="14" width="7" height="7" rx="1.5"></rect>
+              <rect x="14" y="14" width="7" height="7" rx="1.5"></rect></svg
+            >운영 현황
+          </button>
+          <button
+            class="nav-item"
+            id="tab-contents"
+            role="tab"
+            aria-selected="false"
+            aria-controls="panel-contents"
+            tabindex="-1"
+            data-view="contents"
+            disabled
+          >
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M3 7h18v13H3zM3 7V4h7l2 3"></path>
+              <path d="M8 12h8M8 16h5"></path></svg
+            >콘텐츠 관리
+          </button>
+          <button
+            class="nav-item"
+            id="tab-search"
+            role="tab"
+            aria-selected="false"
+            aria-controls="panel-search"
+            tabindex="-1"
+            data-view="search"
+            disabled
+          >
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <circle cx="10.5" cy="10.5" r="7.5"></circle>
+              <path d="m16 16 5 5M10.5 7v7M7 10.5h7"></path></svg
+            >검색 테스트
+          </button>
+          <button
+            class="nav-item"
+            id="tab-index"
+            role="tab"
+            aria-selected="false"
+            aria-controls="panel-index"
+            tabindex="-1"
+            data-view="index"
+            disabled
+          >
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <ellipse cx="12" cy="5" rx="8" ry="3"></ellipse>
+              <path
+                d="M4 5v14c0 1.7 3.6 3 8 3s8-1.3 8-3V5M4 12c0 1.7 3.6 3 8 3s8-1.3 8-3"
+              ></path></svg
+            >인덱스 관리
+          </button>
+        </nav>
+        <div class="sidebar-bottom">
+          <span class="sidebar-label">현재 환경</span>
+          <strong id="sidebar-environment">연결 대기</strong>
+          <p id="sidebar-note">관리자 키로 연결하면<br />운영 상태를 확인할 수 있습니다.</p>
+          <a class="public-link" href="/" target="_blank" rel="noopener noreferrer"
+            >기존 검색 서비스 <span aria-hidden="true">↗</span></a
+          >
+        </div>
+      </aside>
+
+      <main id="main" tabindex="-1">
+        <header class="topbar">
+          <div class="breadcrumb">
+            SEARCH OPERATIONS <span aria-hidden="true">/</span>
+            <span id="breadcrumb-view">운영 현황</span>
+          </div>
+          <div class="topbar-actions">
+            <span class="connection-state" id="connection-state"
+              ><span class="status-dot" aria-hidden="true"></span
+              ><span id="connection-label">연결 전</span></span
+            >
+            <button class="button button-quiet small" id="refresh-status" type="button" hidden>
+              새로고침
+            </button>
+            <button class="button button-quiet small" id="disconnect" type="button" hidden>
+              연결 해제
+            </button>
+          </div>
+        </header>
+
+        <div class="page-content">
+          <section id="connection-gate" class="connection-gate" aria-labelledby="connection-title">
+            <div class="gate-intro">
+              <span class="eyebrow">SEARCH AGENT ADMIN</span>
+              <h1 id="connection-title">검색 운영을<br /><span>한곳에서.</span></h1>
+              <p>
+                콘텐츠를 확인하고, 검색 결과를 검증하고,<br class="desktop-break" />
+                인덱스를 관리하세요.
+              </p>
+              <div class="gate-tags" aria-label="관리 기능">
+                <span>콘텐츠</span><span>검색 테스트</span><span>인덱스</span>
+              </div>
+            </div>
+            <form id="connection-form" class="connection-card">
+              <span class="mini-icon" aria-hidden="true"
+                ><svg viewBox="0 0 24 24">
+                  <rect x="5" y="10" width="14" height="11" rx="2"></rect>
+                  <path d="M8 10V7a4 4 0 0 1 8 0v3M12 14v3"></path></svg
+              ></span>
+              <h2>관리자 연결</h2>
+              <p class="muted">서버에 설정된 관리자 키를 입력하세요.</p>
+              <label for="admin-key">관리자 키</label>
+              <input
+                id="admin-key"
+                type="password"
+                minlength="32"
+                maxlength="4096"
+                required
+                autocomplete="off"
+                spellcheck="false"
+                placeholder="32자 이상의 관리자 키"
+                aria-describedby="key-help"
+              />
+              <p class="field-help" id="key-help">
+                키는 현재 창의 메모리에서만 사용합니다. 새로고침하면 다시 입력해 주세요.
+              </p>
+              <button class="button button-primary full-width" id="connect-button" type="submit">
+                운영 콘솔 연결 <span aria-hidden="true">→</span>
+              </button>
+              <p class="feedback" id="connection-feedback" role="status" aria-live="polite"></p>
+            </form>
+          </section>
+
+          <div id="workspace" hidden>
+            <div class="page-heading">
+              <div>
+                <span class="eyebrow">관리자 워크스페이스</span>
+                <h1 id="page-title">운영 현황</h1>
+                <p id="page-description">현재 검색 환경과 콘텐츠 상태를 확인하세요.</p>
+              </div>
+              <span class="environment-badge" id="environment-badge"></span>
+            </div>
+            <p
+              class="feedback page-feedback"
+              id="global-feedback"
+              role="status"
+              aria-live="polite"
+            ></p>
+
+            <section
+              id="panel-overview"
+              role="tabpanel"
+              aria-labelledby="tab-overview"
+              tabindex="0"
+            >
+              <div class="service-banner">
+                <div class="service-symbol" aria-hidden="true">↗</div>
+                <div>
+                  <h2 id="overview-status">운영 상태 확인 중</h2>
+                  <p id="overview-summary"></p>
+                </div>
+                <div class="last-checked">
+                  <span>마지막 상태 확인</span><time id="last-checked">—</time>
+                </div>
+              </div>
+              <div class="metric-grid">
+                <article class="metric-card">
+                  <span class="metric-label">등록 콘텐츠</span><strong id="stat-content">—</strong>
+                  <p id="stat-content-note">확인 전</p>
+                </article>
+                <article class="metric-card">
+                  <span class="metric-label">검색 백엔드</span><strong id="stat-backend">—</strong>
+                  <p id="stat-backend-note">확인 전</p>
+                </article>
+                <article class="metric-card">
+                  <span class="metric-label">실행 모드</span><strong id="stat-mode">—</strong>
+                  <p id="stat-mode-note">확인 전</p>
+                </article>
+                <article class="metric-card">
+                  <span class="metric-label">모델 추론 검증</span
+                  ><strong id="stat-model">미확인</strong>
+                  <p id="stat-model-note">검색 테스트에서 실제 실행 여부 확인</p>
+                </article>
+              </div>
+              <div class="overview-grid">
+                <section class="card">
+                  <div class="card-heading">
+                    <div>
+                      <span class="eyebrow">MODEL CONFIGURATION</span>
+                      <h2>검색 모델 구성</h2>
+                    </div>
+                    <span class="tag neutral">설정 · 로딩 상태</span>
+                  </div>
+                  <div id="model-list" class="model-list"></div>
+                  <p class="card-footnote">
+                    모델의 설정·로딩 상태는 추론 성공이나 검색 품질 검증 결과를 의미하지 않습니다.
+                  </p>
+                </section>
+                <section class="card">
+                  <div class="card-heading">
+                    <div>
+                      <span class="eyebrow">ENVIRONMENT</span>
+                      <h2>현재 운영 환경</h2>
+                    </div>
+                  </div>
+                  <dl id="environment-facts" class="facts"></dl>
+                  <p class="notice" id="catalog-notice"></p>
+                </section>
+              </div>
+              <div class="quick-grid">
+                <button class="quick-card" type="button" data-open-view="contents">
+                  <span class="quick-number">01</span
+                  ><span
+                    ><strong>콘텐츠 살펴보기</strong
+                    ><small>등록 자료와 메타데이터 확인</small></span
+                  ><span aria-hidden="true">↗</span></button
+                ><button class="quick-card" type="button" data-open-view="search">
+                  <span class="quick-number">02</span
+                  ><span
+                    ><strong>검색 결과 검증하기</strong
+                    ><small>검색 조건·근거·점수 함께 확인</small></span
+                  ><span aria-hidden="true">↗</span>
+                </button>
+              </div>
+            </section>
+
+            <section
+              id="panel-contents"
+              role="tabpanel"
+              aria-labelledby="tab-contents"
+              tabindex="0"
+              hidden
+            >
+              <section class="card catalog-card">
+                <div class="card-heading">
+                  <div>
+                    <h2>콘텐츠 목록</h2>
+                    <p class="muted">제목·설명·콘텐츠 ID로 등록 자료를 찾아보세요.</p>
+                  </div>
+                  <span class="tag neutral" id="content-count-label">조회 전</span>
+                </div>
+                <form id="content-filter" class="filter-row">
+                  <div class="search-field">
+                    <label class="sr-only" for="content-query">콘텐츠 검색어</label
+                    ><input
+                      id="content-query"
+                      type="search"
+                      maxlength="500"
+                      placeholder="제목, 설명 또는 콘텐츠 ID 검색"
+                    />
+                  </div>
+                  <label class="page-size-label" for="content-limit"
+                    >표시 수<select id="content-limit">
+                      <option value="10">10개</option>
+                      <option value="20" selected>20개</option>
+                      <option value="50">50개</option>
+                    </select></label
+                  ><button class="button button-primary" id="content-search-button" type="submit">
+                    조회
+                  </button>
+                </form>
+                <p class="feedback" id="content-feedback" role="status" aria-live="polite"></p>
+                <div class="table-scroll">
+                  <table>
+                    <caption class="sr-only">
+                      등록 콘텐츠 목록
+                    </caption>
+                    <thead>
+                      <tr>
+                        <th scope="col">콘텐츠</th>
+                        <th scope="col">주제</th>
+                        <th scope="col">연령</th>
+                        <th scope="col">출처 / 구분</th>
+                        <th scope="col"><span class="sr-only">상세 보기</span></th>
+                      </tr>
+                    </thead>
+                    <tbody id="content-rows"></tbody>
+                  </table>
+                </div>
+                <div class="empty-state" id="content-empty" hidden>
+                  <span class="empty-symbol" aria-hidden="true">⌕</span>
+                  <h3>표시할 콘텐츠가 없습니다</h3>
+                  <p>검색어를 바꾸거나 등록 상태를 확인해 주세요.</p>
+                </div>
+                <div class="pagination">
+                  <span id="content-page-label">목록을 조회해 주세요.</span>
+                  <div>
+                    <button
+                      class="button button-quiet small"
+                      type="button"
+                      id="content-prev"
+                      disabled
+                    >
+                      ← 이전</button
+                    ><button
+                      class="button button-quiet small"
+                      type="button"
+                      id="content-next"
+                      disabled
+                    >
+                      다음 →
+                    </button>
+                  </div>
+                </div>
+              </section>
+              <section class="card ingest-card">
+                <div class="card-heading">
+                  <div>
+                    <span class="eyebrow">METADATA INGEST</span>
+                    <h2>콘텐츠 메타데이터 등록</h2>
+                    <p class="muted">
+                      매니페스트를 검증한 후 설정된 OpenSearch 인덱스에 적재합니다.
+                    </p>
+                  </div>
+                  <span class="tag teal">미디어 다운로드 없음</span>
+                </div>
+                <form id="ingest-form">
+                  <div class="upload-row">
+                    <label class="file-label" for="manifest-file"
+                      >JSON 파일 불러오기<input
+                        id="manifest-file"
+                        type="file"
+                        accept=".json,application/json" /></label
+                    ><span class="field-help" id="manifest-limit">최대 100개 항목 · 2 MB</span>
+                  </div>
+                  <label for="manifest-json">매니페스트 JSON</label
+                  ><textarea
+                    id="manifest-json"
+                    rows="7"
+                    spellcheck="false"
+                    placeholder='{"version": 1, "entries": [...]}'
+                    aria-describedby="manifest-help"
+                  ></textarea>
+                  <p class="field-help" id="manifest-help">
+                    기존 MediaManifest 형식을 사용합니다. 출처·라이선스·메타데이터 근거 필드가
+                    필요합니다.
+                  </p>
+                  <div class="action-row">
+                    <button class="button button-secondary" id="preview-ingest" type="submit">
+                      1. 내용 검증</button
+                    ><button
+                      class="button button-primary"
+                      id="execute-ingest"
+                      type="button"
+                      disabled
+                    >
+                      2. 인덱스에 적재</button
+                    ><span class="field-help" id="ingest-availability"></span>
+                  </div>
+                </form>
+                <p class="feedback" id="ingest-feedback" role="status" aria-live="polite"></p>
+                <div id="ingest-result" class="operation-result" hidden></div>
+                <details class="raw-details" id="ingest-raw-details" hidden>
+                  <summary>적재 API 응답</summary>
+                  <pre id="ingest-raw"></pre>
+                </details>
+              </section>
+            </section>
+
+            <section
+              id="panel-search"
+              role="tabpanel"
+              aria-labelledby="tab-search"
+              tabindex="0"
+              hidden
+            >
+              <section class="card search-lab">
+                <div class="card-heading">
+                  <div>
+                    <span class="eyebrow">SEARCH LAB</span>
+                    <h2>검색 동작 확인</h2>
+                    <p class="muted">사용자와 동일한 검색 파이프라인으로 결과를 확인합니다.</p>
+                  </div>
+                  <span class="tag neutral" id="search-mode-label"></span>
+                </div>
+                <form id="search-form">
+                  <label for="search-query">검색어</label>
+                  <div class="query-row">
+                    <input
+                      id="search-query"
+                      type="search"
+                      maxlength="500"
+                      placeholder="예: 5살 아이가 볼 공룡 영상"
+                      required
+                    /><button class="button button-primary" id="run-search" type="submit">
+                      검색 실행 <span aria-hidden="true">↗</span>
+                    </button>
+                  </div>
+                  <div class="search-options">
+                    <label for="search-top-k"
+                      >후보 Top K<input
+                        id="search-top-k"
+                        type="number"
+                        min="1"
+                        max="100"
+                        value="20"
+                        required /></label
+                    ><label for="search-top-n"
+                      >결과 Top N<input
+                        id="search-top-n"
+                        type="number"
+                        min="1"
+                        max="100"
+                        value="5"
+                        required
+                    /></label>
+                    <p class="field-help">
+                      Top N은 Top K 이하여야 합니다.<br />연령은 하드 필터로 적용됩니다.
+                    </p>
+                  </div>
+                </form>
+                <p class="feedback" id="search-feedback" role="status" aria-live="polite"></p>
+              </section>
+              <div class="search-initial empty-state card" id="search-initial">
+                <span class="empty-symbol" aria-hidden="true">⌕</span>
+                <h3>첫 검색을 실행해 보세요</h3>
+                <p>검색 조건, 후보 수, 결과의 근거와 점수를 확인할 수 있습니다.</p>
+              </div>
+              <div id="search-output" hidden>
+                <div class="search-summary" id="search-summary"></div>
+                <section class="card conditions-card">
+                  <h2>해석된 검색 조건</h2>
+                  <div id="search-conditions" class="condition-list"></div>
+                  <p id="search-notice" class="field-help"></p>
+                </section>
+                <div id="search-results" class="search-results"></div>
+                <details class="card raw-details">
+                  <summary>검색 API 응답 보기</summary>
+                  <pre id="search-raw"></pre>
+                </details>
+              </div>
+            </section>
+
+            <section
+              id="panel-index"
+              role="tabpanel"
+              aria-labelledby="tab-index"
+              tabindex="0"
+              hidden
+            >
+              <section class="card">
+                <div class="card-heading">
+                  <div>
+                    <span class="eyebrow">CONFIGURED INDEX</span>
+                    <h2>현재 인덱스</h2>
+                    <p class="muted">서버에 설정된 검색 인덱스의 상태를 확인합니다.</p>
+                  </div>
+                  <span class="tag neutral" id="index-state-label">확인 전</span>
+                </div>
+                <dl id="index-facts" class="facts index-facts"></dl>
+                <p id="index-notice" class="notice"></p>
+                <details class="raw-details" id="index-identity-details" hidden>
+                  <summary>인덱스에 기록된 임베딩 정보</summary>
+                  <pre id="index-identity"></pre>
+                </details>
+              </section>
+              <div class="index-actions">
+                <section class="card">
+                  <span class="action-index">01 / PREPARE</span>
+                  <h2>인덱스 준비</h2>
+                  <p>
+                    설정된 인덱스가 없으면 생성하고, 기존 인덱스는 현재 임베딩 구성과의 호환성을
+                    확인합니다.
+                  </p>
+                  <p class="field-help">임베딩 모델 로딩이 발생할 수 있습니다.</p>
+                  <button class="button button-primary" id="ensure-index" type="button" disabled>
+                    인덱스 준비
+                  </button>
+                </section>
+                <section class="card">
+                  <span class="action-index">02 / REFRESH</span>
+                  <h2>검색에 즉시 반영</h2>
+                  <p>최근 적재한 문서가 검색에서 보이도록 현재 인덱스를 새로 고칩니다.</p>
+                  <p class="field-help">문서나 임베딩을 다시 생성하지 않습니다.</p>
+                  <button class="button button-secondary" id="refresh-index" type="button" disabled>
+                    인덱스 새로고침
+                  </button>
+                </section>
+              </div>
+              <p class="field-help" id="index-availability"></p>
+              <p class="feedback" id="index-feedback" role="status" aria-live="polite"></p>
+              <details class="card raw-details" id="index-operation-details" hidden>
+                <summary>인덱스 작업 API 응답</summary>
+                <pre id="index-operation-raw"></pre>
+              </details>
+            </section>
+            <footer class="page-footer">
+              <span>Search Agent · 운영 콘솔</span
+              ><span>상태 조회만으로 실제 Qwen / BGE 추론은 검증되지 않습니다.</span>
+            </footer>
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <dialog id="content-dialog" class="detail-dialog" aria-labelledby="content-detail-title">
+      <div class="dialog-top">
+        <span class="eyebrow">CONTENT DETAIL</span
+        ><button
+          class="button button-quiet small"
+          id="close-content-dialog"
+          type="button"
+          aria-label="콘텐츠 상세 닫기"
+        >
+          닫기 ×
+        </button>
+      </div>
+      <h2 id="content-detail-title"></h2>
+      <p id="content-detail-description"></p>
+      <dl id="content-detail-facts" class="facts"></dl>
+      <div id="content-detail-source"></div>
+      <details class="raw-details">
+        <summary>전체 메타데이터</summary>
+        <pre id="content-detail-raw"></pre>
+      </details>
+    </dialog>
+    <dialog
+      id="confirm-dialog"
+      class="confirm-dialog"
+      aria-labelledby="confirm-title"
+      aria-describedby="confirm-description"
+    >
+      <span class="eyebrow">작업 확인</span>
+      <h2 id="confirm-title"></h2>
+      <p id="confirm-description"></p>
+      <p class="notice" id="confirm-note"></p>
+      <div class="dialog-actions">
+        <button class="button button-quiet" id="cancel-confirm" type="button">취소</button
+        ><button class="button button-primary" id="accept-confirm" type="button">실행</button>
+      </div>
+    </dialog>
+  </body>
+</html>
