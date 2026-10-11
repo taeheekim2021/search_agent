@@ -115,3 +115,7 @@ and infrastructure/security prerequisites. No production cluster or credentials 
 See [BENCHMARK.md](BENCHMARK.md) for the explicit real-model benchmark harness, public
 Wikidata metadata collector, on-demand validation templates, and the 10,000 KRW monthly
 cost gate. Templates are unbuilt and no paid infrastructure has been provisioned.
+
+For a finite, ephemeral Cloud Run Job validation (no interactive server), see the
+[bounded validation package](deploy/cloud-run-validation/README.md). It requires verified
+image/cache details and a whole-month cost check before any paid build or execution.

@@ -1,0 +1,13 @@
+# Disposable loopback validation only. Never use for a network-accessible cluster.
+cluster.name: finite-validation
+node.name: finite-validation
+network.host: 127.0.0.1
+http.port: 9200
+transport.port: 9300
+discovery.type: single-node
+node.store.allow_mmap: false
+bootstrap.memory_lock: false
+plugins.security.disabled: true
+path.data: /validation-work/opensearch-data
+path.logs: /validation-work/opensearch-logs
+action.destructive_requires_name: true
