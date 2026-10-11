@@ -111,7 +111,7 @@ def admin_route_class(settings: Settings) -> type[APIRoute]:
                         headers=exc.headers,
                     )
                 except ModelError as exc:
-                    logger.exception("Admin model stage failed: %s", exc.stage)
+                    logger.error("Admin model stage failed: %s", exc.stage)
                     response = JSONResponse(
                         status_code=503,
                         content={
@@ -153,8 +153,8 @@ def admin_route_class(settings: Settings) -> type[APIRoute]:
                             }
                         },
                     )
-                except Exception:
-                    logger.exception("Admin operation failed")
+                except Exception as exc:  # noqa: BLE001 — sanitized API boundary
+                    logger.error("Admin operation failed (%s)", type(exc).__name__)
                     response = JSONResponse(
                         status_code=500,
                         content={
@@ -250,6 +250,7 @@ def media_item(item: MediaRecord) -> dict:
         "age_rating_source",
         "retrieved_at",
         "rights_verified",
+        "rights_scope",
         "media_format",
         "metadata_license",
         "license_notes",
@@ -395,7 +396,9 @@ class AdminService:
                 )
                 result["status"] = "degraded"
                 return result
-            metadata = mapping[store.index]["mappings"].get("_meta", {})
+            if len(mapping) != 1:
+                raise OpenSearchError("Expected one index behind read alias")
+            metadata = next(iter(mapping.values()))["mappings"].get("_meta", {})
             identity = metadata.get("embedding_identity")
             index.update(
                 state="available",

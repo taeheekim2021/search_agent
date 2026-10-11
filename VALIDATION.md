@@ -100,3 +100,62 @@ PyTorch/Transformers 모델 의존성과 수 GB 가중치를 다운로드하지 
 - `.github/workflows/ci.yml`은 기존 CI PR #1의 파일과 동일하게 사용합니다. 이번 변경의 `tests/test_opensearch_integration.py`는 임시 OpenSearch 2.19.3 인덱스에서 관리자 상태·페이지 조회·미리보기·확인 후 적재·인덱스 준비·새로고침·검색을 실제 HTTP 경계까지 검사하도록 확장했습니다. `.github/workflows/admin-ui.yml`은 관리자·기존 검색 화면과 정적 검사를 실행하고 관리자 화면 캡처를 CI 아티팩트로 남깁니다. 최신 실행 결과는 해당 PR의 GitHub Actions 검사를 확인하세요.
 
 이 작업의 단위 테스트와 OpenSearch 통합 테스트는 synthetic 모델 어댑터·벡터를 사용합니다. **실제 Qwen/BGE 가중치 로딩·추론, 검색 품질과 모델 지연은 검증하지 않았습니다.** 운영 인덱스나 실제 미디어 데이터에 적재하지 않았으며 서비스 배포도 수행하지 않았습니다. 계정별 권한 관리, 삭제·alias 교체, 비동기 작업 큐는 이번 관리자 서비스 범위에 포함하지 않습니다.
+
+## 2026-10-11: production-oriented OpenSearch increment
+
+- Inspected clean checkout and remote main at `d734b0d96a393a82ed5e20036d8132ed81d3c933`.
+  No repository/workspace `AGENTS.md` or `.agents/skills` files were present.
+- Extended the existing media store/ingestor/search and admin paths; no replacement app.
+  Added bounded bulk writes, sanitized item outcomes, transient retry/backoff, UUID/model/
+  metadata-bound checkpoints, concrete version publication and rollback, write blocking,
+  alias-aware mapping/status and search pinning, strict production settings and replica checks.
+- Real local OpenSearch **2.19.3**, started with `compose.opensearch.yml` on loopback.
+  Synthetic integration covered 2560-vector mapping, keyword/k-NN hard filters, repeated
+  writes, metadata-only ingestion, admin authentication/API, checkpoint resume, atomic alias
+  promotion/rollback, immutable published versions and old-version query pinning.
+- Ruff lint and format checks passed for `search_agent scripts tests`; mypy passed for
+  `search_agent scripts` (23 source files). `git diff --check` passed.
+- Public Chromium smoke passed: repeated Korean sample queries, input error, empty results,
+  mobile overflow and JavaScript-error checks. Admin Chromium smoke passed: authenticated
+  status/browse/search, metadata preview, XSS-as-text, no credential persistence, confirmation/
+  cancellation and partial-failure rendering. These browser runs used sample/mock or fully
+  intercepted synthetic responses; no real-model inference or production writes.
+- Test environment: Python 3.12.14, FastAPI 0.143.0, Pydantic 2.14.0, NumPy 2.5.4, installed
+  from declared dev dependencies. The older `requirements-tested.txt` was not overwritten.
+  One upstream Starlette/httpx deprecation warning remains.
+- No actual Qwen/BGE weights were run in this increment. Existing real-model sample revision
+  results are separate evidence and do not establish real-model OpenSearch quality/latency.
+  Production endpoint, credentials, network/CA setup, sizing and model-to-cluster acceptance
+  testing remain pending. No live Cloud Run changes, IAM changes, credential creation,
+  private-data ingestion, git push or merge occurred. Only test-owned synthetic indices
+  were removed by integration-test cleanup; existing data was not deleted.
+- See `OPENSEARCH.md` for release/rollback, least-privilege access, serialized publisher and
+  durable checkpoint requirements. Catalog size is unknown and is not a coding blocker:
+  shard/replica and bulk limits are configurable; the runbook states sizing assumptions.
+- Final combined run with `OPENSEARCH_TEST=1`, loopback URL and explicit local HTTP opt-in:
+  **177 passed** in 14.75 seconds (including the live integration test). The extra alias
+  test verifies filtered aliases fail closed instead of bypassing filters. Both CLI
+  publication planning and metadata dry-run completed without model or network access.
+
+### Final review and verification
+
+- Final combined run: **209 passed, 1 upstream warning in 15.16 seconds**, including two
+  live OpenSearch integration tests. Ruff check/format passed (41 files); mypy passed
+  (26 source files). Public and authenticated admin Chromium smoke tests passed again.
+- Independent security review fixes cover shard/block acknowledgements, restricted aliases,
+  sanitized malformed stored records, production-setting alignment, and durable pending
+  checkpoints before remote writes. Live-engine tests verify stale alias swaps abort
+  atomically and repeated already-finalized write blocks follow OpenSearch's exact no-op
+  response. Publication requires exclusive release-workflow ownership; see OPENSEARCH.md.
+- Added opt-in real-model indexing/search benchmark with provenance, warm/cold-process
+  separation, concurrency/error/latency metrics and optional reviewed relevance judgments.
+  Its tests use synthetic doubles; no real model performance or quality is claimed.
+- Added a bounded Wikidata CC0 structured-metadata collector and metadata-only download
+  guards. Attempted collection failed with a network ProxyError; no collected catalog is
+  included. Query fixtures are examples, not an evaluated relevance dataset.
+- Docker development OpenSearch ran successfully. The separate validation deployment
+  Compose configuration parsed successfully; its application image was not built/deployed.
+  BENCHMARK.md records unknown price inputs and requires a verified whole-service monthly
+  total, before credits, within 10,000 KRW before any billable provisioning.
+- Branch publication and a draft PR were subsequently authorized. Production deployment,
+  paid infrastructure, IAM changes, credentials and merges remain outside this increment.

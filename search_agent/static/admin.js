@@ -578,7 +578,7 @@
         topics.append(wrap.childElementCount ? wrap : node('span', '—'));
         const source = node(
           'td',
-          item.is_sample ? '가상 샘플' : item.license || item.language || '미확인',
+          item.is_sample ? '가상 샘플' : `${item.license || item.language || '미확인'}${item.rights_scope === 'metadata' ? ' (메타데이터만)' : ''}`,
           'table-source',
         );
         const action = node('td');
@@ -645,7 +645,7 @@
           : '미상',
       ],
       ['언어', item.language || '미상'],
-      ['라이선스', item.is_sample ? '가상 샘플' : item.license || '미확인'],
+      ['라이선스', item.is_sample ? '가상 샘플' : `${item.license || '미확인'}${item.rights_scope === 'metadata' ? ' (메타데이터만; 영상 권리 미확인)' : ''}`],
       ['원본 ID', item.source_id || '해당 없음'],
     ]);
     el('content-detail-source').replaceChildren();

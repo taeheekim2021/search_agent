@@ -1,0 +1,22 @@
+# Development only: no security plugin; exposed exclusively on host loopback.
+services:
+  opensearch:
+    image: opensearchproject/opensearch:2.19.3
+    environment:
+      discovery.type: single-node
+      node.store.allow_mmap: "false"
+      OPENSEARCH_JAVA_OPTS: -Xms512m -Xmx512m
+      DISABLE_INSTALL_DEMO_CONFIG: "true"
+      DISABLE_SECURITY_PLUGIN: "true"
+    ports:
+      - "127.0.0.1:9200:9200"
+    volumes:
+      - opensearch-dev:/usr/share/opensearch/data
+    healthcheck:
+      test: ["CMD-SHELL", "curl --fail --silent http://localhost:9200/_cluster/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 30
+    mem_limit: 2g
+volumes:
+  opensearch-dev:

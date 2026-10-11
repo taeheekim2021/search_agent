@@ -18,8 +18,13 @@ class ModelConfig(BaseModel):
 
 class Settings(BaseSettings):
     model_config = SettingsConfigDict(
-        env_prefix="SEARCH_", env_nested_delimiter="__", env_file=".env", extra="ignore"
+        env_prefix="SEARCH_",
+        env_nested_delimiter="__",
+        env_file=".env",
+        extra="ignore",
+        hide_input_in_errors=True,
     )
+    environment: Literal["development", "production"] = "development"
     mode: Literal["real", "mock"] = "real"
     backend: Literal["sample", "opensearch"] = "sample"
     catalog_path: Path = Path("data/sample_catalog.json")
@@ -35,6 +40,17 @@ class Settings(BaseSettings):
 
     @model_validator(mode="after")
     def limits(self):
+        if self.environment == "production":
+            import re
+
+            if self.mode != "real":
+                raise ValueError("Production cannot use mock models")
+            if not all(
+                re.fullmatch(r"[0-9a-f]{40}", c.revision) for c in (self.embedding, self.reranker)
+            ):
+                raise ValueError(
+                    "Production model revisions must be immutable 40-character commits"
+                )
         if self.admin_api_key is not None:
             key = self.admin_api_key.get_secret_value()
             if len(key) < 32 or any(not 33 <= ord(char) <= 126 for char in key):

@@ -57,6 +57,7 @@ class MediaEntry(BaseModel):
     attribution: str = Field(min_length=1, max_length=4000)
     # Explicit review assertion, never inferred from a hostname or a search snippet.
     rights_verified: Literal[True]
+    rights_scope: Literal["media", "metadata"] = "media"
     metadata_provenance: dict[str, Provenance]
     license_notes: str = Field(default="", max_length=4000)
     metadata_license: str = Field(default="", max_length=500)

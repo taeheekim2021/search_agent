@@ -34,10 +34,10 @@ def normalize(vectors: Any, rows: int, dimensions: int) -> NDArray:
     arr = np.asarray(vectors, dtype=np.float32)
     if arr.shape != (rows, dimensions) or not np.isfinite(arr).all():
         raise ValueError(f"Expected finite vectors {(rows, dimensions)}, got {arr.shape}")
-    norms = np.linalg.norm(arr, axis=1, keepdims=True)
+    norms = np.linalg.norm(arr.astype(np.float64), axis=1, keepdims=True)
     if np.any(norms <= 0):
         raise ValueError("Zero embedding vector")
-    return arr / norms
+    return (arr / norms).astype(np.float32)
 
 
 class TransformerAdapter:

@@ -93,5 +93,7 @@ def _import_local(
 def import_local(
     entry: MediaEntry, source: Path, settings: MediaSettings, *, probe: bool = False
 ) -> dict:
+    if entry.rights_scope != "media":
+        raise ValueError("Metadata licensing does not authorize media acquisition")
     with media_lock(settings.root):
         return _import_local(entry, source, settings, probe=probe)
