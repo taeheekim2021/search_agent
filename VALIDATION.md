@@ -159,3 +159,19 @@ PyTorch/Transformers 모델 의존성과 수 GB 가중치를 다운로드하지 
   total, before credits, within 10,000 KRW before any billable provisioning.
 - Branch publication and a draft PR were subsequently authorized. Production deployment,
   paid infrastructure, IAM changes, credentials and merges remain outside this increment.
+
+## 2026-10-11: finite Cloud Run Job preparation
+
+Based on merged main `78e5c71aa6234e5cd17f6f1a4ca444b66ec5c7f0`. Added a bounded
+supervisor, offline baked-model derivative-image recipe, Job/OpenSearch templates, and
+checksummed structured-log evidence reconstruction. One task, zero retries, 30-minute
+outer timeout, 8 CPU/32 GiB, 2 GiB ephemeral workspace, at most 20 public metadata records,
+and eight search calls. The user approved only loopback test authentication disabling.
+
+Local synthetic checks: **223 passed, 2 live-engine tests skipped**, one existing upstream
+warning; Ruff lint/format and mypy (28 source files) passed. YAML parsed and task/resource/
+loopback bounds checked. Independent review identified partial failure report loss and
+cleanup errors interrupting export; both fixed and covered by tests. No composite image
+built, models loaded, cloud resources created, permissions changed, or paid work performed.
+Actual image identity/cache layout, platform boot, log retention/export permissions, and
+whole-month cost remain unverified. See `deploy/cloud-run-validation/README.md`.

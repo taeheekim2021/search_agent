@@ -1,0 +1,49 @@
+# NOT deploy-ready: replace every REPLACE token after cost, image and permission review.
+# No service endpoint, scheduler, public access, VPC connector or IAM mutation.
+apiVersion: run.googleapis.com/v1
+kind: Job
+metadata:
+  name: search-agent-finite-validation
+spec:
+  template:
+    spec:
+      taskCount: 1
+      parallelism: 1
+      template:
+        spec:
+          serviceAccountName: REPLACE_EXISTING_APPROVED_SERVICE_ACCOUNT
+          maxRetries: 0
+          timeoutSeconds: '1800'
+          containers:
+            - image: REPLACE_VALIDATION_IMAGE_AT_SHA256
+              resources:
+                limits:
+                  cpu: '8'
+                  memory: 32Gi
+              env:
+                - name: VALIDATION_EXECUTE
+                  value: '1'
+                - name: VALIDATION_LOOPBACK_AUTH_APPROVED
+                  value: '1' # User approved only this isolated temporary loopback test.
+                - name: VALIDATION_MODEL_IMAGE
+                  value: REPLACE_MODEL_IMAGE_AT_SHA256
+                - name: VALIDATION_ENGINE_IMAGE
+                  value: REPLACE_OPENSEARCH_2_19_3_IMAGE_AT_SHA256
+                - name: SEARCH_CODE_REVISION
+                  value: REPLACE_TESTED_CODE_COMMIT
+                - name: SEARCH_HF_CACHE_DIR
+                  value: REPLACE_EXISTING_BAKED_HF_CACHE_PATH
+                - name: SEARCH_EMBEDDING__REVISION
+                  value: REPLACE_BAKED_QWEN_COMMIT
+                - name: SEARCH_RERANKER__REVISION
+                  value: REPLACE_BAKED_BGE_COMMIT
+              volumeMounts:
+                - name: ephemeral-work
+                  mountPath: /validation-work
+              # Reviewed public metadata + queries must be baked into this derivative image.
+              args: [/validation-input/manifest.json, /validation-input/queries.json]
+          volumes:
+            - name: ephemeral-work
+              emptyDir:
+                medium: Memory
+                sizeLimit: 2Gi
