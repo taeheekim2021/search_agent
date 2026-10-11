@@ -129,10 +129,38 @@ class FakeOpenSearch:
 
     def handle(self, request):
         method, path = request.method, request.url.path
-        body = json.loads(request.content) if request.content else None
+        body = (
+            None
+            if path.endswith("/_bulk")
+            else json.loads(request.content)
+            if request.content
+            else None
+        )
         self.requests.append((method, path, body))
         if self.unavailable:
             raise httpx.ConnectError(UPSTREAM_SECRET, request=request)
+        if method == "GET" and path == f"/{self.index}/_settings":
+            return httpx.Response(
+                200, json={self.index: {"settings": {"index": {"uuid": "fixture"}}}}
+            )
+        if method == "POST" and path == f"/{self.index}/_bulk":
+            lines = [json.loads(line) for line in request.content.splitlines()]
+            outcomes = []
+            for action, doc in zip(lines[::2], lines[1::2], strict=True):
+                content_id = action["index"]["_id"]
+                failed = content_id in self.fail_upsert_ids
+                if not failed:
+                    self.docs[content_id] = doc
+                outcomes.append(
+                    {
+                        "index": {
+                            "_id": content_id,
+                            "status": 400 if failed else 201,
+                            **({"error": {"reason": UPSTREAM_SECRET}} if failed else {}),
+                        }
+                    }
+                )
+            return httpx.Response(200, json={"items": outcomes})
         if method == "GET" and path == "/":
             return httpx.Response(200, json={"version": {"number": "2.19.3"}})
         if method == "GET" and path == f"/{self.index}/_mapping":

@@ -25,7 +25,7 @@ def create_app(
     if agent is None and config.backend == "opensearch":
         agent = MediaSearchAgent(
             config,
-            OpenSearchStore(OpenSearchSettings()),
+            OpenSearchStore(OpenSearchSettings.for_search(config)),
             QwenEmbedding(config.embedding, str(config.hf_cache_dir), 2560),
             BGEReranker(config.reranker, str(config.hf_cache_dir)),
         )
@@ -98,7 +98,7 @@ def create_app(
         except ValueError as exc:
             raise HTTPException(422, detail=str(exc)) from exc
         except ModelError as exc:
-            logging.getLogger(__name__).exception("Model stage failed: %s", exc.stage)
+            logging.getLogger(__name__).error("Model stage failed: %s", exc.stage)
             raise HTTPException(
                 503,
                 detail={

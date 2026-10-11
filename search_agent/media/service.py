@@ -37,9 +37,10 @@ class MediaSearchAgent:
         n = request.top_n if request.top_n is not None else self.settings.result_top_n
         if n > k:
             raise ValueError("top_n must be <= top_k")
-        tags, characters = self.store.vocabulary()
+        store = self.store.snapshot() if isinstance(self.store, OpenSearchStore) else self.store
+        tags, characters = store.vocabulary()
         conditions = extract_vocabulary(request.query, tags, characters)
-        if self.store.count(conditions) == 0:
+        if store.count(conditions) == 0:
             return MediaSearchResponse(
                 conditions=conditions,
                 results=[],
@@ -47,13 +48,13 @@ class MediaSearchAgent:
                 model_inference_performed=False,
                 elapsed_ms=round((perf_counter() - start) * 1000, 2),
             )
-        self.store.verify_identity(self.embedding.identity)
+        store.verify_identity(self.embedding.identity)
         try:
             query_vector = self.embedding.query(request.query)
-            semantic = self.store.search(vector_query(query_vector, conditions, k))
+            semantic = store.search(vector_query(query_vector, conditions, k))
         except ValueError as exc:
             raise ModelError("embedding", "Invalid query vector") from exc
-        lexical = self.store.search(bm25_query(request.query, conditions, k))
+        lexical = store.search(bm25_query(request.query, conditions, k))
         by_id = {r.content_id: r for r in semantic + lexical}
         lexical_ids = [r.content_id for r in lexical]
         semantic_ids = [r.content_id for r in semantic]
@@ -79,7 +80,11 @@ class MediaSearchAgent:
                 f"원본 언어: {record.language}",
                 f"주제: {', '.join(record.tags)}",
                 f"저작자: {record.author}",
-                f"라이선스: {record.license}",
+                (
+                    f"메타데이터 라이선스: {record.license} (영상 이용허락 미확인)"
+                    if record.rights_scope == "metadata"
+                    else f"라이선스: {record.license}"
+                ),
                 f"출처: {record.canonical_url}",
                 f"표시 문구: {record.attribution}",
             ]

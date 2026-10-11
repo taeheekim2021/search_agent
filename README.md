@@ -105,3 +105,13 @@ python scripts/smoke_models.py --run-real
 GitHub Actions는 단위·계약 테스트, 임시 OpenSearch 2.19.3 서버를 사용하는 관리자 API 통합 테스트, 모의 서버의 관리자·기존 검색 화면 브라우저 테스트를 실행합니다. 관리자 화면 캡처는 CI 아티팩트로 7일간 보관합니다. OpenSearch 테스트의 벡터와 모델은 synthetic fixture이며 실제 Qwen/BGE 추론·검색 품질·모델 지연 검증은 포함하지 않습니다.
 
 실제 테스트 현황과 남은 제한은 [VALIDATION.md](VALIDATION.md)에 기록합니다. 관리자 API에는 공유 키 인증을 적용했으며 기존 일반 검색 API는 공개 상태입니다. 사용자별 계정·권한, 운영 환경 배포는 포함하지 않습니다.
+
+### Production-oriented OpenSearch workflow
+
+See [OPENSEARCH.md](OPENSEARCH.md) for local Docker Compose, bulk metadata ingestion with
+retries/checkpoints, immutable version publication and rollback, production configuration,
+and infrastructure/security prerequisites. No production cluster or credentials are bundled.
+
+See [BENCHMARK.md](BENCHMARK.md) for the explicit real-model benchmark harness, public
+Wikidata metadata collector, on-demand validation templates, and the 10,000 KRW monthly
+cost gate. Templates are unbuilt and no paid infrastructure has been provisioned.

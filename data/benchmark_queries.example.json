@@ -1,0 +1,8 @@
+{
+  "notice": "Example queries only; not a representative workload or relevance judgments.",
+  "queries": [
+    {"id": "animation", "query": "애니메이션 영화"},
+    {"id": "film", "query": "영화"},
+    {"id": "english", "query": "animated film"}
+  ]
+}

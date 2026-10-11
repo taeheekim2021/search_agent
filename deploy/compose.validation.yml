@@ -1,0 +1,48 @@
+# Local/on-demand validation only; no infrastructure provisioning or public port exposure.
+# Linux host networking connects to compose.opensearch.yml's loopback-only OpenSearch.
+services:
+  benchmark:
+    profiles: [benchmark]
+    build:
+      context: ..
+    image: search-agent-validation:local
+    network_mode: host
+    restart: "no"
+    cpus: 4
+    mem_limit: 24g
+    env_file:
+      - path: ../.env
+        required: false
+    environment:
+      SEARCH_MODE: real
+      SEARCH_BACKEND: opensearch
+      SEARCH_ENVIRONMENT: development
+      SEARCH_EMBEDDING__REVISION: ${SEARCH_EMBEDDING__REVISION:?Set verified Qwen commit}
+      SEARCH_RERANKER__REVISION: ${SEARCH_RERANKER__REVISION:?Set verified BGE commit}
+      SEARCH_CODE_REVISION: ${SEARCH_CODE_REVISION:?Set tested code commit}
+      OPENSEARCH_PRODUCTION: "false"
+      OPENSEARCH_URL: http://127.0.0.1:9200
+      OPENSEARCH_ALLOW_HTTP_LOCAL: "true"
+      OPENSEARCH_INDEX: ${OPENSEARCH_INDEX:?Set a concrete benchmark index}
+    volumes:
+      - model-cache:/app/.cache
+      - ../data:/inputs:ro
+      - ${BENCHMARK_OUTPUT_DIR:?Set existing writable output directory}:/results
+    command:
+      - python
+      - -m
+      - search_agent.benchmark
+      - search
+      - /inputs/benchmark_queries.example.json
+      - --corpus-manifest
+      - /inputs/wikidata_starter.json
+      - --output
+      - /results/search.json
+      - --run-real
+  server:
+    extends: benchmark
+    profiles: [server]
+    # Optional private validation server; production uses reviewed HTTPS/credentials/replicas.
+    command: [python, -m, uvicorn, "search_agent.app:app", --host, 127.0.0.1, --port, "8080", --workers, "1"]
+volumes:
+  model-cache:

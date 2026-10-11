@@ -4,6 +4,8 @@ from urllib.parse import urlsplit
 from pydantic import Field, SecretStr, model_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
+from search_agent.config import Settings
+
 
 class MediaSettings(BaseSettings):
     model_config = SettingsConfigDict(env_prefix="MEDIA_", env_file=".env", extra="ignore")
@@ -17,15 +19,32 @@ class MediaSettings(BaseSettings):
 
 
 class OpenSearchSettings(BaseSettings):
-    model_config = SettingsConfigDict(env_prefix="OPENSEARCH_", env_file=".env", extra="ignore")
+    model_config = SettingsConfigDict(
+        env_prefix="OPENSEARCH_", env_file=".env", extra="ignore", hide_input_in_errors=True
+    )
     url: str = "https://localhost:9200"
     index: str = Field(default="kids-media-v1", pattern=r"^[a-z0-9][a-z0-9_-]{0,100}$")
     username: str | None = None
     password: SecretStr | None = None
     ca_certs: Path | None = None
+    production: bool = False
+    shards: int = Field(default=1, ge=1, le=32)
+    replicas: int = Field(default=0, ge=0, le=10)
+    bulk_size: int = Field(default=32, ge=1, le=100)
+    bulk_max_bytes: int = Field(default=5_000_000, ge=100_000, le=20_000_000)
+    bulk_retries: int = Field(default=3, ge=0, le=6)
+    retry_base_seconds: float = Field(default=0.5, ge=0, le=10)
     timeout_seconds: float = Field(default=15, gt=0, le=120)
     # Explicit local-only exception. Certificate verification cannot be disabled.
     allow_http_local: bool = False
+
+    @classmethod
+    def for_search(cls, settings: Settings):
+        # Never let a development default override either explicit production switch.
+        config = cls(production=True) if settings.environment == "production" else cls()
+        if config.production and settings.environment != "production":
+            raise ValueError("OPENSEARCH_PRODUCTION requires SEARCH_ENVIRONMENT=production")
+        return config
 
     @model_validator(mode="after")
     def endpoint(self):
@@ -44,4 +63,6 @@ class OpenSearchSettings(BaseSettings):
             )
         if bool(self.username) != bool(self.password):
             raise ValueError("Both OpenSearch username and password must be set together")
+        if self.production and (self.allow_http_local or not self.username or self.replicas < 1):
+            raise ValueError("Production OpenSearch requires TLS, authentication and replicas >= 1")
         return self

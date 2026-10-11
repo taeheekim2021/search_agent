@@ -40,6 +40,12 @@ def atomic_json(path: Path, data: dict):
             f.flush()
             os.fsync(f.fileno())
             os.replace(tmp, path)
+            # Persist the rename as well as its contents before acknowledging a checkpoint.
+            directory = os.open(path.parent, os.O_RDONLY | os.O_DIRECTORY)
+            try:
+                os.fsync(directory)
+            finally:
+                os.close(directory)
         finally:
             tmp.unlink(missing_ok=True)
 
@@ -65,6 +71,7 @@ class Ingestor:
         dry_run: bool = True,
         download_only: bool = False,
         download_media: bool = False,
+        resume: bool = False,
     ) -> dict:
         metadata_only = not (download_only or download_media)
         if metadata_only:
@@ -89,7 +96,14 @@ class Ingestor:
             if self.embedding is None or self.index is None:
                 raise ValueError("Indexing requires real embedding and OpenSearch adapters")
             with media_lock(self.settings.root):
+                from .batch import ingest_bulk
+                from .opensearch import OpenSearchStore
+
+                if isinstance(self.index, OpenSearchStore):
+                    return ingest_bulk(self, manifest, resume=resume)
                 return self._run_metadata(manifest)
+        if any(entry.rights_scope != "media" for entry in manifest.entries):
+            raise ValueError("Metadata licensing does not authorize media acquisition")
         policy = URLPolicy(self.settings.allowed_domains)
         for entry in manifest.entries:
             policy.check(entry.original_url)

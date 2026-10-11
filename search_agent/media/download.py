@@ -202,6 +202,8 @@ class LocalMediaStore:
         return target
 
     def download(self, entry: MediaEntry, prior: dict | None = None) -> Downloaded:
+        if entry.rights_scope != "media":
+            raise ValueError("Metadata licensing does not authorize media acquisition")
         self.policy.check(entry.original_url)
         target = self.target(entry)
         target.parent.mkdir(parents=True, exist_ok=True)

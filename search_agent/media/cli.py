@@ -49,6 +49,22 @@ def main() -> int:
         action="store_true",
         help="Optional legacy download+index path; requires --execute",
     )
+    ingest.add_argument(
+        "--resume",
+        action="store_true",
+        help="Skip matching successful checkpoints for this concrete index UUID",
+    )
+    publish = commands.add_parser(
+        "publish", help="Publish or roll back a versioned index read alias"
+    )
+    publish.add_argument("alias")
+    publish.add_argument(
+        "--expected-current",
+        required=True,
+        help="Current concrete index, or NONE for first publication",
+    )
+    publish.add_argument("--expected-count", type=int, required=True)
+    publish.add_argument("--execute", action="store_true", help="Apply the reviewed alias switch")
     args = parser.parse_args()
     if args.command == "ingest" and args.download_media and not args.execute:
         parser.error("--download-media requires --execute")
@@ -59,6 +75,35 @@ def main() -> int:
             args.output.parent.mkdir(parents=True, exist_ok=True)
             args.output.write_text(manifest.model_dump_json(indent=2), encoding="utf-8")
             print(json.dumps({"status": "adapted", "entries": len(manifest.entries)}))
+            return 0
+        if args.command == "publish":
+            models = Settings()
+            os_config = OpenSearchSettings.for_search(models)
+            if not args.execute:
+                print(
+                    json.dumps(
+                        {
+                            "status": "planned",
+                            "index": os_config.index,
+                            "alias": args.alias,
+                            "expected_current": args.expected_current,
+                            "expected_count": args.expected_count,
+                            "network_accessed": False,
+                        }
+                    )
+                )
+                return 0
+            if models.mode != "real" or models.dimensions != 2560:
+                raise ValueError("Publication requires real mode and 2560 dimensions")
+            publisher_embedding = QwenEmbedding(models.embedding, str(models.hf_cache_dir), 2560)
+            store = OpenSearchStore(os_config)
+            result = store.publish(
+                args.alias,
+                publisher_embedding.identity,
+                expected_current=None if args.expected_current == "NONE" else args.expected_current,
+                expected_count=args.expected_count,
+            )
+            print(json.dumps(result))
             return 0
         manifest = load_manifest(args.manifest)
         if args.command == "import-local":
@@ -81,16 +126,18 @@ def main() -> int:
         cache = None
         if args.execute:
             models = Settings()
-            if models.dimensions != 2560:
-                raise ValueError("Media index requires 2560 dimensions")
+            if models.mode != "real" or models.dimensions != 2560:
+                raise ValueError("Media index requires real mode and 2560 dimensions")
             embedding = QwenEmbedding(models.embedding, str(models.hf_cache_dir), 2560)
-            store = OpenSearchStore(OpenSearchSettings())
+            os_config = OpenSearchSettings.for_search(models)
+            store = OpenSearchStore(os_config)
             cache = EmbeddingCache(media.root / ".vectors")
         result = Ingestor(media, embedding=embedding, index=store, cache=cache).run(
             manifest,
             dry_run=not (args.execute or args.download_only),
             download_only=args.download_only,
             download_media=args.download_media,
+            resume=args.resume,
         )
         print(json.dumps(result, ensure_ascii=False, indent=2))
         return 1 if result["status"] == "partial_failure" else 0

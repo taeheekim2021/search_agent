@@ -13,7 +13,7 @@ from search_agent.domain import Conditions
 from search_agent.media.config import MediaSettings, OpenSearchSettings
 from search_agent.media.domain import MediaEntry, MediaManifest, MediaRecord
 from search_agent.media.ingest import Ingestor
-from search_agent.media.opensearch import OpenSearchStore, bm25_query, vector_query
+from search_agent.media.opensearch import OpenSearchError, OpenSearchStore, bm25_query, vector_query
 from search_agent.media.service import MediaSearchAgent
 
 pytestmark = pytest.mark.skipif(
@@ -23,7 +23,7 @@ pytestmark = pytest.mark.skipif(
 
 def test_live_2560_mapping_filters_upsert_and_identity(tmp_path, monkeypatch):
     config = OpenSearchSettings().model_copy(
-        update={"index": "search-agent-test-" + uuid.uuid4().hex}
+        update={"index": "search-agent-test-v1-" + uuid.uuid4().hex}
     )
     store = OpenSearchStore(config)
     identity = {
@@ -39,6 +39,8 @@ def test_live_2560_mapping_filters_upsert_and_identity(tmp_path, monkeypatch):
         for field in ["title", "description", "tags", "language", "duration_seconds"]
     }
     ids = []
+    next_store = OpenSearchStore(config.model_copy(update={"index": config.index + "-next"}))
+    alias = config.index + "-read"
     try:
         store.ensure_index(identity)
         store.ensure_index(identity)
@@ -169,6 +171,97 @@ def test_live_2560_mapping_filters_upsert_and_identity(tmp_path, monkeypatch):
             assert found.status_code == 200
             assert [item["content_id"] for item in found.json()["results"]] == [ids[0]]
             assert store.count(Conditions()) == 4
+        # Bulk checkpoints and alias promotion/rollback against a real engine.
+        resumed = ingestor.run(
+            MediaManifest(version=1, entries=[entry]), dry_run=False, resume=True
+        )
+        assert resumed["resumed"] == 1
+        next_store.ensure_index(identity)
+        outcomes = next_store.bulk_upsert([(record, vector)])
+        assert outcomes[0]["status"] == "indexed"
+        assert next_store.count(Conditions()) == 1
+        first = store.publish(alias, identity, expected_current=None, expected_count=4)
+        assert first["previous_index"] is None
+        reader = OpenSearchStore(config.model_copy(update={"index": alias}))
+        try:
+            reader.verify_identity(identity)
+            assert reader.count(Conditions()) == 4
+            pinned = reader.snapshot()
+            second = next_store.publish(
+                alias, identity, expected_current=store.index, expected_count=1
+            )
+            assert second["previous_index"] == store.index
+            assert reader.count(Conditions()) == 1
+            assert pinned.count(Conditions()) == 4
+            with pytest.raises(OpenSearchError):
+                store.publish(alias, identity, expected_current=store.index, expected_count=4)
+            # Rollback uses the same validation and retains both immutable versions.
+            store.publish(alias, identity, expected_current=next_store.index, expected_count=4)
+            assert reader.count(Conditions()) == 4
+            assert next_store.count(Conditions()) == 1
+            assert store.bulk_upsert([(record, vector)])[0]["status"] == "failed"
+            with TestClient(
+                create_app(
+                    settings,
+                    MediaSearchAgent(settings, reader, FixtureEmbedding(), FixtureReranker()),
+                )
+            ) as client:
+                client.headers["Authorization"] = f"Bearer {admin_key}"
+                assert client.get("/api/admin/status").json()["index"]["state"] == "available"
+                found = client.post("/api/search", json={"query": "5살 펭귄 영상"})
+                assert found.status_code == 200
+                assert [item["content_id"] for item in found.json()["results"]] == [ids[0]]
+        finally:
+            reader.close()
     finally:
+        # Only unique test-owned indices created by this test are removed.
+        next_store.request("DELETE", f"/{next_store.index}", allow_not_found=True)
+        next_store.close()
         store.request("DELETE", f"/{config.index}", allow_not_found=True)
+        store.close()
+
+
+def test_live_stale_alias_swap_after_preflight_is_atomic():
+    """Another publisher wins after our GET: must_exist must abort the whole stale POST."""
+    store = OpenSearchStore(OpenSearchSettings())
+    prefix = "search-agent-race-test-" + uuid.uuid4().hex
+    old, winner, stale = [prefix + suffix for suffix in ("-old", "-winner", "-stale")]
+    alias = prefix + "-read"
+    created = []
+    try:
+        for name in (old, winner, stale):
+            store.request("PUT", f"/{name}", body={"settings": {"number_of_replicas": 0}})
+            created.append(name)
+        store.request(
+            "POST",
+            "/_aliases",
+            body={"actions": [{"add": {"index": old, "alias": alias, "is_write_index": False}}]},
+        )
+        assert set(store.request("GET", f"/_alias/{alias}")) == {old}
+        # Competing serialized update reaches the server between preflight and stale POST.
+        store.request(
+            "POST",
+            "/_aliases",
+            body={
+                "actions": [
+                    {"remove": {"index": old, "alias": alias, "must_exist": True}},
+                    {"add": {"index": winner, "alias": alias, "is_write_index": False}},
+                ]
+            },
+        )
+        with pytest.raises(OpenSearchError):
+            store.request(
+                "POST",
+                "/_aliases",
+                body={
+                    "actions": [
+                        {"remove": {"index": old, "alias": alias, "must_exist": True}},
+                        {"add": {"index": stale, "alias": alias, "is_write_index": False}},
+                    ]
+                },
+            )
+        assert set(store.request("GET", f"/_alias/{alias}")) == {winner}
+    finally:
+        for name in created:
+            store.request("DELETE", f"/{name}", allow_not_found=True)
         store.close()
